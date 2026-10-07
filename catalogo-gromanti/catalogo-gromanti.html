@@ -1,0 +1,693 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Puertas de Interior · Aluwal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500;600&family=Barlow+Condensed:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+  :root { --gold:#c9a96e; --bg:#0b0b0c; --panel:#141416; --line:#2a2a2e; --txt:#e8e6e1; --muted:#8a8780; --light:#e9e8e4; }
+  * { box-sizing:border-box; }
+  html, body { margin:0; background:#050505; color:var(--txt); font-family:Barlow, sans-serif; }
+  body { padding:24px 16px 60px; display:flex; flex-direction:column; align-items:center; gap:24px; }
+
+  .tools { display:flex; gap:10px; align-items:center; }
+  .tools span { font-family:'Barlow Condensed'; letter-spacing:.25em; text-transform:uppercase; font-size:13px; color:var(--muted); }
+  .tools button { font-family:'Barlow Condensed'; text-transform:uppercase; letter-spacing:.15em; font-size:13px; background:var(--gold); color:#111; border:1px solid var(--gold); padding:9px 18px; cursor:pointer; }
+
+  .page { width:210mm; height:297mm; position:relative; overflow:hidden; background:var(--bg); box-shadow:0 10px 40px rgba(0,0,0,.6); }
+  .pad { position:absolute; inset:14mm 14mm 18mm; display:flex; flex-direction:column; }
+  .eyebrow { font-family:'Barlow Condensed'; text-transform:uppercase; letter-spacing:.35em; font-size:8.5pt; color:var(--gold); }
+  .rule { width:22mm; height:1px; background:var(--gold); }
+  .folio { position:absolute; left:14mm; right:14mm; bottom:8mm; display:flex; justify-content:space-between; align-items:center; font-family:'Barlow Condensed'; text-transform:uppercase; letter-spacing:.3em; font-size:7.5pt; color:var(--muted); }
+  .folio .l { display:flex; align-items:center; gap:4mm; }
+  .folio img { height:4.6mm; opacity:.85; }
+  .folio img.g { height:3mm; opacity:.45; }
+  .sec-tit { display:flex; align-items:baseline; gap:4mm; margin:0 0 3.5mm; }
+  .sec-tit h3 { font-family:'Barlow Condensed'; font-weight:400; text-transform:uppercase; letter-spacing:.18em; font-size:11.5pt; margin:0; white-space:nowrap; }
+  .sec-tit .rule { flex:1; background:var(--line); }
+
+  /* ---------- Tapa ---------- */
+  .cover .photo { position:absolute; inset:0; background:url('img/amb-gris-carbono.jpg') 58% center/cover; filter:brightness(.8) saturate(.85); }
+  .cover .shade { position:absolute; inset:0; background:linear-gradient(180deg, rgba(11,11,12,.9) 0%, rgba(11,11,12,.25) 28%, rgba(11,11,12,.2) 50%, rgba(11,11,12,.98) 80%); }
+  .cover .top { position:absolute; top:16mm; left:16mm; right:16mm; display:flex; justify-content:space-between; align-items:flex-start; }
+  .cover .top img { height:13mm; }
+  .cover .bottom { position:absolute; left:16mm; right:16mm; bottom:18mm; }
+  .cover h1 { font-family:'Barlow Condensed'; font-weight:500; font-size:70pt; line-height:.9; letter-spacing:.02em; margin:5mm 0 0; text-transform:uppercase; }
+  .cover h1 em { font-style:normal; font-weight:300; color:var(--gold); }
+  .cover .sub { margin-top:6mm; font-family:'Barlow Condensed'; text-transform:uppercase; letter-spacing:.3em; font-size:11pt; color:#cfccc5; }
+  .cover .tags { margin-top:8mm; display:flex; gap:3mm; flex-wrap:wrap; }
+  .cover .tags span { border:1px solid rgba(201,169,110,.6); font-family:'Barlow Condensed'; text-transform:uppercase; letter-spacing:.2em; font-size:8pt; padding:2mm 3.5mm; }
+  .dist { display:flex; align-items:center; gap:5mm; margin-top:10mm; padding-top:6mm; border-top:1px solid var(--line); }
+  .dist span { font-family:'Barlow Condensed'; text-transform:uppercase; letter-spacing:.3em; font-size:8pt; color:var(--gold); line-height:1.5; }
+  .dist img { height:7mm; }
+
+  /* ---------- Presentación ---------- */
+  .p2 h2, .lp h2 { font-family:'Barlow Condensed'; font-weight:400; text-transform:uppercase; font-size:24pt; line-height:1; letter-spacing:.04em; margin:3mm 0 5mm; }
+  .p2 .intro { display:grid; grid-template-columns:1fr 68mm; gap:9mm; }
+  .p2 p { font-size:9.6pt; line-height:1.6; color:#c9c6bf; margin:0 0 3mm; }
+  .p2 p b { color:var(--txt); font-weight:500; }
+  .p2 .badge { border:1px solid var(--line); border-left:2px solid var(--gold); background:var(--panel); padding:7mm 6mm; display:flex; flex-direction:column; gap:4mm; justify-content:center; }
+  .p2 .badge img { width:100%; }
+  .p2 .badge .eyebrow { font-size:7.5pt; }
+  .p2 .badge p { font-size:8.5pt; margin:0; }
+  .lineas { margin-top:auto; display:grid; grid-template-columns:repeat(3, 1fr); gap:5mm; }
+  .lin { background:var(--panel); border:1px solid var(--line); display:flex; flex-direction:column; }
+  .lin .pic { height:56mm; background:var(--light); display:flex; align-items:flex-end; justify-content:center; gap:2mm; padding:5mm 3mm 0; min-height:0; }
+  .lin .pic img { height:92%; mix-blend-mode:multiply; }
+  .lin .t { padding:3.5mm 4mm 4mm; }
+  .lin .t .n { font-family:'Barlow Condensed'; font-weight:300; color:var(--gold); font-size:9pt; letter-spacing:.2em; }
+  .lin .t h4 { font-family:'Barlow Condensed'; font-weight:500; text-transform:uppercase; letter-spacing:.08em; font-size:13pt; margin:.5mm 0 1mm; }
+  .lin .t p { font-size:7.8pt; line-height:1.4; color:#a9a69f; margin:0; }
+
+  /* ---------- Página de línea ---------- */
+  .lp .hero { position:absolute; top:0; left:0; right:0; height:100mm; background-size:cover; background-position:center; filter:saturate(.85); }
+  .lp .hero::after { content:''; position:absolute; inset:0; background:linear-gradient(180deg, rgba(11,11,12,.55) 0%, rgba(11,11,12,0) 30%, rgba(11,11,12,.2) 60%, rgba(11,11,12,1) 100%); }
+  .lp .htop { position:absolute; top:12mm; left:14mm; right:14mm; display:flex; justify-content:space-between; align-items:center; }
+  .lp .htop img { height:8mm; }
+  .lp .htop img.g { height:4mm; opacity:.8; }
+  .lp .head { position:absolute; top:70mm; left:14mm; right:14mm; display:flex; justify-content:space-between; align-items:flex-end; }
+  .lp .head h2 { font-size:40pt; font-weight:500; margin:2mm 0 0; line-height:.9; }
+  .lp .head h2 em { font-style:normal; font-weight:300; color:var(--gold); }
+  .lp .head .tag { font-family:'Barlow Condensed'; text-transform:uppercase; letter-spacing:.25em; font-size:8.5pt; color:#cfccc5; text-align:right; line-height:1.6; }
+  .lp .body { position:absolute; top:108mm; left:14mm; right:14mm; bottom:16mm; display:flex; flex-direction:column; }
+  .lp .lead { font-size:9.4pt; line-height:1.6; color:#c9c6bf; margin:0 0 5mm; }
+  .lp .lead b { color:var(--txt); font-weight:500; }
+
+  .doors { background:var(--light); display:flex; justify-content:space-around; align-items:flex-end; padding:6mm 4mm 0; height:70mm; flex:none; position:relative; }
+  .doors::after { content:''; position:absolute; left:0; right:0; bottom:0; height:15mm; background:#d9d8d4; z-index:0; }
+  .door { display:flex; flex-direction:column; align-items:center; height:100%; position:relative; z-index:1; }
+  .door img { height:calc(100% - 9mm); mix-blend-mode:multiply; }
+  .door b { font-family:'Barlow Condensed'; font-weight:500; text-transform:uppercase; letter-spacing:.18em; font-size:7.5pt; color:#3a3936; margin-top:2mm; text-align:center; line-height:1.1; }
+  .door b small { display:block; font-weight:400; letter-spacing:.1em; font-size:6pt; color:#77746d; }
+  .doors.sm { height:62mm; }
+
+  .ficha { display:grid; grid-template-columns:1fr 1fr; gap:7mm; margin-top:6mm; }
+  .ficha h4 { font-family:'Barlow Condensed'; font-weight:400; text-transform:uppercase; letter-spacing:.12em; font-size:10.5pt; margin:0 0 1.5mm; }
+  .ficha h4 span { color:var(--gold); }
+  .ficha dl { margin:0; display:grid; grid-template-columns:20mm 1fr; font-size:7.6pt; line-height:1.42; }
+  .ficha dt { font-family:'Barlow Condensed'; text-transform:uppercase; letter-spacing:.2em; font-size:6.8pt; color:var(--gold); padding:1.6mm 0; border-top:1px solid var(--line); }
+  .ficha dd { margin:0; color:#bdbab3; padding:1.6mm 0; border-top:1px solid var(--line); }
+  .ficha dd b { color:var(--txt); font-weight:500; }
+
+  .swatches { display:flex; gap:2.5mm; }
+  .sw { flex:1; }
+  .sw i { display:block; height:15mm; background-size:cover; background-position:center; border:1px solid var(--line); }
+  .sw span { display:block; font-family:'Barlow Condensed'; text-transform:uppercase; letter-spacing:.18em; font-size:6.8pt; color:var(--muted); margin-top:1.5mm; text-align:center; }
+
+  /* Elite */
+  .elite2 { display:grid; grid-template-columns:1fr 64mm; gap:7mm; margin-top:6mm; flex:1; min-height:0; }
+  .feat { list-style:none; margin:0; padding:0; font-size:8.6pt; }
+  .feat li { padding:2.1mm 0; border-top:1px solid var(--line); display:flex; gap:3mm; color:var(--txt); }
+  .feat li::before { content:''; width:3mm; height:1px; background:var(--gold); margin-top:2.2mm; flex:none; }
+  .corte { background:var(--light); display:flex; align-items:center; justify-content:center; }
+  .corte img { width:100%; mix-blend-mode:multiply; }
+  .lanz { display:grid; grid-template-columns:1fr 1fr; gap:5mm; height:138mm; }
+  .lanz .card { position:relative; background-size:cover; background-position:center; }
+  .lanz .card::after { content:''; position:absolute; inset:0; background:linear-gradient(180deg, rgba(11,11,12,0) 45%, rgba(11,11,12,.95) 100%); }
+  .lanz .card .t { position:absolute; left:5mm; right:5mm; bottom:5mm; z-index:1; }
+  .lanz .card h4 { font-family:'Barlow Condensed'; font-weight:500; text-transform:uppercase; font-size:19pt; letter-spacing:.04em; margin:1.5mm 0 1mm; line-height:1; }
+  .lanz .card p { font-size:8pt; color:#cfccc5; margin:0; line-height:1.45; }
+  .medbox { border:1px solid var(--line); border-left:2px solid var(--gold); background:var(--panel); padding:4mm 5mm; display:grid; grid-template-columns:auto 1fr 1fr; gap:6mm; align-items:center; }
+  .medbox .k { font-family:'Barlow Condensed'; text-transform:uppercase; letter-spacing:.2em; font-size:7pt; color:var(--muted); }
+  .medbox .v { font-family:'Barlow Condensed'; font-size:14pt; letter-spacing:.04em; }
+  .medbox .v small { font-size:8pt; color:var(--muted); }
+
+  /* F30 */
+  .f30grid { display:grid; grid-template-columns:44mm 1fr 1fr; gap:6mm; }
+  .f30door { background:var(--light); display:flex; align-items:center; justify-content:center; padding:4mm; }
+  .f30door img { width:100%; mix-blend-mode:multiply; }
+  .cert { border:1px solid var(--line); border-left:2px solid var(--gold); background:var(--panel); padding:4.5mm 5mm; font-size:8pt; line-height:1.5; color:#bdbab3; }
+  .cert b { color:var(--txt); font-weight:500; }
+  .cert .num { margin-top:3mm; display:grid; grid-template-columns:1fr 1fr; gap:2.5mm 4mm; }
+  .cert .num div { font-family:'Barlow Condensed'; text-transform:uppercase; letter-spacing:.15em; font-size:6.5pt; color:var(--muted); }
+  .cert .num div b { display:block; font-weight:400; font-size:15pt; letter-spacing:.02em; color:var(--gold); }
+  .plano { background:var(--light); margin-top:5mm; display:flex; align-items:center; justify-content:center; height:50mm; }
+  .plano img { height:100%; mix-blend-mode:multiply; }
+
+  /* Medidas */
+  .med { display:grid; grid-template-columns:1fr 1fr; gap:6mm 8mm; }
+  .mt { border:1px solid var(--line); background:var(--panel); padding:4mm 4.5mm; }
+  .mt h5 { font-family:'Barlow Condensed'; font-weight:500; text-transform:uppercase; letter-spacing:.12em; font-size:9.5pt; margin:0 0 .5mm; }
+  .mt .s { font-family:'Barlow Condensed'; text-transform:uppercase; letter-spacing:.18em; font-size:6.8pt; color:var(--gold); margin-bottom:2.5mm; }
+  .mt table { width:100%; border-collapse:collapse; font-size:8.2pt; }
+  .mt th { font-family:'Barlow Condensed'; font-weight:400; text-transform:uppercase; letter-spacing:.15em; font-size:6.6pt; color:var(--muted); text-align:left; padding:1.6mm 0; border-top:1px solid var(--line); width:23mm; }
+  .mt td { padding:1.6mm 0; border-top:1px solid var(--line); text-align:center; color:var(--txt); }
+  .mt td.alt { color:var(--gold); }
+  .mt .nota { font-size:6.8pt; color:var(--muted); margin-top:2mm; line-height:1.45; }
+
+  /* Contratapa */
+  .back .grid { position:absolute; inset:0; background:
+      linear-gradient(90deg, rgba(201,169,110,.06) 1px, transparent 1px) 0 0/21mm 21mm,
+      linear-gradient(rgba(201,169,110,.06) 1px, transparent 1px) 0 0/21mm 21mm; }
+  .back .glow { position:absolute; right:-30mm; top:0; width:190mm; height:150mm; background:radial-gradient(closest-side, rgba(201,169,110,.12), transparent); }
+  .back .row { position:absolute; top:24mm; left:16mm; right:16mm; display:flex; justify-content:center; align-items:flex-end; gap:6mm; height:82mm; }
+  .back .row img { height:100%; filter:drop-shadow(0 6mm 10mm rgba(0,0,0,.6)); }
+  .back .row img:nth-child(odd) { height:92%; }
+  .back .center { position:absolute; left:16mm; right:16mm; bottom:34mm; }
+  .back .center img.logo { height:16mm; }
+  .back h2 { font-family:'Barlow Condensed'; font-weight:400; text-transform:uppercase; font-size:24pt; line-height:1.05; letter-spacing:.04em; margin:8mm 0 7mm; max-width:140mm; }
+  .contacto { display:grid; grid-template-columns:1fr 30mm; gap:8mm; align-items:end; border-top:1px solid var(--line); padding-top:7mm; }
+  .contacto dl { margin:0; display:grid; grid-template-columns:24mm 1fr; row-gap:2.6mm; font-size:9.5pt; }
+  .contacto dt { font-family:'Barlow Condensed'; text-transform:uppercase; letter-spacing:.25em; font-size:7.5pt; color:var(--gold); padding-top:.6mm; }
+  .contacto dd { margin:0; }
+  .qr { background:#fff; padding:2mm; width:30mm; height:30mm; }
+  .qr img, .qr canvas { width:100% !important; height:100% !important; display:block; }
+  .qr-cap { font-family:'Barlow Condensed'; text-transform:uppercase; letter-spacing:.2em; font-size:6.5pt; color:var(--muted); text-align:center; margin-top:2mm; }
+  .legal { position:absolute; left:16mm; right:16mm; bottom:9mm; font-size:6.5pt; color:#5d5b56; line-height:1.4; display:flex; justify-content:space-between; align-items:center; gap:8mm; }
+  .legal img { height:4mm; opacity:.5; }
+
+  @media screen and (max-width: 860px) {
+    .page { zoom:calc((100vw - 32px) / 794px); }
+  }
+  @page { size:A4; margin:0; }
+  @media print {
+    html, body { background:var(--bg); }
+    body { padding:0; gap:0; display:block; }
+    .tools { display:none; }
+    .page { box-shadow:none; page-break-after:always; break-after:page; zoom:1; }
+    * { -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+  }
+</style>
+</head>
+<body>
+
+<div class="tools">
+  <span>Puertas de interior · 11 páginas A4</span>
+  <button onclick="window.print()">Guardar PDF</button>
+</div>
+
+<!-- 01 TAPA -->
+<section class="page cover">
+  <div class="photo"></div>
+  <div class="shade"></div>
+  <div class="top">
+    <img src="img/logo.png" alt="Aluwal Aberturas">
+    <div class="eyebrow">Catálogo 2026</div>
+  </div>
+  <div class="bottom">
+    <div class="rule"></div>
+    <h1>Puertas<br><em>de interior</em></h1>
+    <div class="sub">Placas listas para colocar</div>
+    <div class="tags">
+      <span>Elite</span><span>F30</span><span>2000</span><span>2006</span><span>Masonite</span><span>Clásica</span>
+    </div>
+    <div class="dist">
+      <span>Distribuidor<br>oficial</span>
+      <img src="img/gromanti.png" alt="Gromanti">
+    </div>
+  </div>
+</section>
+
+<!-- 02 PRESENTACIÓN -->
+<section class="page p2">
+  <div class="pad">
+    <div class="intro">
+      <div>
+        <div class="eyebrow">Puertas de interior</div>
+        <h2>Las puertas que<br>vendemos y colocamos</h2>
+        <p>Además de fabricar ventanas de aluminio, en Aluwal somos <b>distribuidores oficiales de Gromanti</b>, una de las fábricas de puertas placa más grandes del país, con planta en Exaltación de la Cruz.</p>
+        <p>Trabajamos sus seis líneas: desde la Clásica para pintar o lustrar hasta la Elite, que viene foliada de fábrica y se coloca en seco. También la F30, homologada contra el fuego.</p>
+        <p><b>Te asesoramos con el modelo y la medida, y te la llevamos a la obra.</b></p>
+      </div>
+      <div class="badge">
+        <div class="eyebrow">Distribuidor oficial</div>
+        <img src="img/gromanti-full.png" alt="Gromanti">
+        <p>Mismo producto y misma garantía de fábrica, con la atención de Aluwal.</p>
+      </div>
+    </div>
+
+    <div class="lineas">
+      <div class="lin">
+        <div class="pic"><img src="img/elite-teka.jpg" alt=""><img src="img/elite-blanco.jpg" alt=""></div>
+        <div class="t"><div class="n">01</div><h4>Línea Elite</h4><p>Foliada en PVC, sin mantenimiento. Lista para instalar en seco.</p></div>
+      </div>
+      <div class="lin">
+        <div class="pic"><img src="img/f30.jpg" alt=""></div>
+        <div class="t"><div class="n">02</div><h4>Línea F30</h4><p>Resistente al fuego, ensayada por el INTI.</p></div>
+      </div>
+      <div class="lin">
+        <div class="pic"><img src="img/m2000-avalon.jpg" alt=""><img src="img/m2000-colonial.jpg" alt=""></div>
+        <div class="t"><div class="n">03</div><h4>Línea 2000</h4><p>Molduras profundas en ambas caras, para pintar del color que quieras.</p></div>
+      </div>
+      <div class="lin">
+        <div class="pic"><img src="img/m2006-sofia.jpg" alt=""><img src="img/m2006-americana2.jpg" alt=""></div>
+        <div class="t"><div class="n">04</div><h4>Línea 2006</h4><p>Lisa con buñas horizontales o verticales. Para pintar o lustrar.</p></div>
+      </div>
+      <div class="lin">
+        <div class="pic"><img src="img/mas-camden.jpg" alt=""><img src="img/mas-mariel.jpg" alt=""></div>
+        <div class="t"><div class="n">05</div><h4>Línea Masonite</h4><p>Paneles moldeados en HDF con superficie texturada.</p></div>
+      </div>
+      <div class="lin">
+        <div class="pic"><img src="img/clasica-enchapada.jpg" alt=""><img src="img/clasica-blanca.jpg" alt=""></div>
+        <div class="t"><div class="n">06</div><h4>Línea Clásica</h4><p>La puerta placa de siempre. Enchapada o para pintar.</p></div>
+      </div>
+    </div>
+  </div>
+  <div class="folio"><span class="l"><img src="img/logo.png" alt=""></span><span>Puertas de interior · 02</span></div>
+</section>
+
+<!-- 03 ELITE -->
+<section class="page lp">
+  <div class="hero" style="background-image:url('img/amb-elite.jpg')"></div>
+  <div class="htop"><img src="img/logo.png" alt=""><img class="g" src="img/gromanti.png" alt=""></div>
+  <div class="head">
+    <div><div class="eyebrow">Línea 01</div><h2>Elite</h2></div>
+    <div class="tag">Lista y terminada<br>para instalar en seco</div>
+  </div>
+  <div class="body">
+    <div class="doors">
+      <div class="door"><img src="img/elite-blanco.jpg" alt=""><b>Blanco</b></div>
+      <div class="door"><img src="img/elite-ebano.jpg" alt=""><b>Ébano</b></div>
+      <div class="door"><img src="img/elite-teka.jpg" alt=""><b>Teka</b></div>
+      <div class="door"><img src="img/elite-vison.jpg" alt=""><b>Visón</b></div>
+      <div class="door"><img src="img/elite-fresno.jpg" alt=""><b>Fresno</b></div>
+      <div class="door"><img src="img/elite-haya.jpg" alt=""><b>Haya</b></div>
+    </div>
+    <div class="elite2">
+      <div>
+        <p class="lead">Hoja, marco y contramarco vienen <b>foliados en PVC de fábrica</b>: no se pintan ni se lustran. Se colocan en seco, sin revoque ni amure, y el contramarco regulable absorbe las diferencias de espesor de la pared.</p>
+        <ul class="feat">
+          <li>Libre de mantenimiento</li>
+          <li>Instalación rápida, sin obra húmeda</li>
+          <li>Kit de contramarco regulable</li>
+          <li>Burlete con aislación acústica</li>
+          <li>Cerradura reforzada</li>
+        </ul>
+      </div>
+      <div class="corte"><img src="img/elite-corte.jpg" alt="Corte de la hoja Elite"></div>
+    </div>
+  </div>
+  <div class="folio"><span class="l"><img src="img/logo.png" alt=""></span><span>Línea Elite · 03</span></div>
+</section>
+
+<!-- 04 ELITE: lanzamientos + ficha -->
+<section class="page">
+  <div class="pad">
+    <div class="sec-tit"><h3>Elite · Lanzamientos</h3><div class="rule"></div></div>
+    <div class="lanz">
+      <div class="card" style="background-image:url('img/amb-gris-carbono.jpg')">
+        <div class="t"><div class="eyebrow">Nuevo color</div><h4>Gris Carbono</h4><p>Opcional con insertos de aluminio.</p></div>
+      </div>
+      <div class="card" style="background-image:url('img/amb-bicolor.jpg')">
+        <div class="t"><div class="eyebrow">Nuevo modelo</div><h4>Bicolor</h4><p>Gris carbono con franja en madera e insertos de aluminio.</p></div>
+      </div>
+    </div>
+
+    <div class="sec-tit" style="margin-top:6mm"><h3>Colores</h3><div class="rule"></div></div>
+    <div class="swatches">
+      <div class="sw"><i style="background:#f1f1ef"></i><span>Blanco</span></div>
+      <div class="sw"><i style="background-image:url('img/sw-ebano.jpg')"></i><span>Ébano</span></div>
+      <div class="sw"><i style="background-image:url('img/sw-teka.jpg')"></i><span>Teka</span></div>
+      <div class="sw"><i style="background-image:url('img/sw-haya.jpg')"></i><span>Haya</span></div>
+      <div class="sw"><i style="background-image:url('img/sw-fresno.jpg')"></i><span>Fresno</span></div>
+      <div class="sw"><i style="background-image:url('img/sw-vison.jpg')"></i><span>Visón</span></div>
+      <div class="sw"><i style="background:#3a3b3d"></i><span>Gris carbono</span></div>
+    </div>
+
+    <div class="medbox" style="margin-top:6mm">
+      <div class="eyebrow">Medidas<br>exteriores</div>
+      <div><div class="k">Anchos</div><div class="v">67 · 77 · 92 · 97 <small>cm</small></div></div>
+      <div><div class="k">Altos</div><div class="v">204 · 220 · 230 · 240 <small>cm</small></div></div>
+    </div>
+
+    <div class="ficha">
+      <div>
+        <h4>Ficha técnica · <span>De abrir</span></h4>
+        <dl>
+          <dt>Hoja</dt><dd>Bastidor perimetral de <b>pino clear</b> estacionado y panel interior <b>nido de abeja</b> celulósico. Emplacada con MDF de 5,5 mm de mediana densidad, en una sola pieza. Acabado foliado en PVC.</dd>
+          <dt>Marco</dt><dd>Pino finger foliado de 1 ½". <b>Contramarco regulable</b>. Burlete termoacústico.</dd>
+          <dt>Cierre</dt><dd>Cerradura reforzada.</dd>
+          <dt>Opcional</dt><dd>Marcos preparados para tabiquería Durlock.</dd>
+        </dl>
+      </div>
+      <div>
+        <h4>Ficha técnica · <span>De embutir</span></h4>
+        <dl>
+          <dt>Hoja</dt><dd>Misma construcción que la puerta de abrir.</dd>
+          <dt>Marco</dt><dd>Pino finger foliado de 1 ½". Contramarco regulable. Burlete termoacústico.</dd>
+          <dt>Cierre</dt><dd>Cerraduras y cubetas embutidas.</dd>
+          <dt>Rodamiento</dt><dd>2 carros de 2 ruedas de nylon.</dd>
+          <dt>Opcional</dt><dd>Marcos preparados para tabiquería Durlock.</dd>
+        </dl>
+      </div>
+    </div>
+  </div>
+  <div class="folio"><span class="l"><img src="img/logo.png" alt=""></span><span>Línea Elite · 04</span></div>
+</section>
+
+<!-- 05 F30 -->
+<section class="page lp">
+  <div class="hero" style="background-image:url('img/amb-f30.jpg')"></div>
+  <div class="htop"><img src="img/logo.png" alt=""><img class="g" src="img/gromanti.png" alt=""></div>
+  <div class="head">
+    <div><div class="eyebrow">Línea 02</div><h2>F30</h2></div>
+    <div class="tag">Resistente<br>al fuego</div>
+  </div>
+  <div class="body">
+    <div class="f30grid">
+      <div class="f30door"><img src="img/f30.jpg" alt=""></div>
+      <div>
+        <p class="lead" style="margin-bottom:3mm">Por dentro lleva un <b>tablero tubular de 38 mm con relleno ignífugo</b>. Además de frenar el fuego, aísla mejor el ruido y la temperatura que una placa común.</p>
+        <ul class="feat">
+          <li>Mayor aislación térmica</li>
+          <li>Mayor aislación acústica</li>
+          <li>Alta resistencia a los impactos</li>
+          <li>Precisión en el espesor</li>
+          <li>Menos peso, más estabilidad</li>
+        </ul>
+      </div>
+      <div class="cert">
+        <div class="eyebrow" style="margin-bottom:2mm">Ensayada por el INTI</div>
+        Homologada bajo normas <b>IRAM 11950:2010, 11951:1996 y 11949:2014</b>. Buenos resultados en estabilidad mecánica y estanqueidad a las llamas, sin emisión de gases inflamables.
+        <div class="num">
+          <div><b>36 min</b>Resist. al fuego</div>
+          <div><b>28 dB</b>Aislación</div>
+          <div><b>17 kg/m²</b>Peso aprox.</div>
+          <div><b>49 mm</b>Espesor</div>
+        </div>
+      </div>
+    </div>
+    <div class="ficha" style="grid-template-columns:1fr 92mm; align-items:start">
+      <div>
+        <h4>Ficha técnica · <span>De abrir</span></h4>
+        <dl>
+          <dt>Hoja</dt><dd>Bastidor de <b>madera semidura</b>, relleno ignífugo y dos tapas de MDF 5,5 mm. Una hoja de abrir, <b>simple contacto</b>.</dd>
+          <dt>Marco</dt><dd>Chapa N° 18, bisagra munición con <b>burlete intumescente</b>.</dd>
+          <dt>Cierre</dt><dd>Cerradura de seguridad Euro-cilindro.</dd>
+          <dt>Opcional</dt><dd>Marcos para Durlock, solo con marco de chapa.</dd>
+          <dt>Medidas</dt><dd>Espesor 49 mm. Exterior <b>980 × 2040 mm</b>.</dd>
+        </dl>
+      </div>
+      <div class="plano" style="margin-top:0"><img src="img/f30-plano.jpg" alt="Plano F30"></div>
+    </div>
+    <div style="margin-top:auto; font-size:7.4pt; color:var(--muted); line-height:1.5">También disponible en los modelos de la Línea Clásica y Línea 2006 (Sofía, Mónica, Americana, Americana 2), sobre MDF de 5,5 mm, simple contacto.</div>
+  </div>
+  <div class="folio"><span class="l"><img src="img/logo.png" alt=""></span><span>Línea F30 · 05</span></div>
+</section>
+
+<!-- 06 LÍNEA 2000 -->
+<section class="page lp">
+  <div class="hero" style="background-image:url('img/amb-2000.jpg')"></div>
+  <div class="htop"><img src="img/logo.png" alt=""><img class="g" src="img/gromanti.png" alt=""></div>
+  <div class="head">
+    <div><div class="eyebrow">Línea 03</div><h2>2000</h2></div>
+    <div class="tag">Molduras<br>en ambas caras</div>
+  </div>
+  <div class="body">
+    <p class="lead">Puertas con <b>molduras profundas en las dos caras</b>, de estilo clásico. Vienen con tres manos de base blanca, listas para pintar del color que elijas.</p>
+    <div class="doors" style="height:88mm">
+      <div class="door"><img src="img/m2000-avalon.jpg" alt=""><b>Avalon</b></div>
+      <div class="door"><img src="img/m2000-colonial.jpg" alt=""><b>Colonial</b></div>
+      <div class="door"><img src="img/m2000-florencia.jpg" alt=""><b>Florencia</b></div>
+      <div class="door"><img src="img/m2000-camden.jpg" alt=""><b>Camden</b></div>
+      <div class="door"><img src="img/m2000-veronica.jpg" alt=""><b>Verónica</b></div>
+    </div>
+    <div class="ficha">
+      <div>
+        <h4>Ficha técnica · <span>De abrir</span></h4>
+        <dl>
+          <dt>Hoja</dt><dd>Bastidor perimetral de <b>pino</b> y panel interior <b>nido de abejas</b>. Tableros de <b>MDF de 5,5 / 9 / 12 mm</b> en una sola pieza, moldurados en ambas caras. Doble faz de 43 mm.</dd>
+          <dt>Marco</dt><dd>Chapa DD N° 18 o madera.</dd>
+          <dt>Cierre</dt><dd>Cerradura Kallay en paneles de 12 mm. Cerradura común en paneles de 9 mm. Bisagras pomela de 3 tornillos, zincadas o bronce.</dd>
+          <dt>Opcional</dt><dd>Marcos para Durlock (con marco de chapa). Hojas con 3 manos de base blanca, listas para pintar. Puertas dobles en todos los modelos y medidas, para tabiques de 10 o 15 cm.</dd>
+        </dl>
+      </div>
+      <div>
+        <h4>Ficha técnica · <span>De embutir</span></h4>
+        <dl>
+          <dt>Hoja</dt><dd>Igual a la de abrir. Doble faz de 43 mm.</dd>
+          <dt>Marco</dt><dd>Marco y nicho de chapa DD N° 18 revestido con metal desplegado o madera.</dd>
+          <dt>Cierre</dt><dd>Cerraduras y cubetas embutidas.</dd>
+          <dt>Rodamiento</dt><dd>2 carros de 2 ruedas de nylon.</dd>
+          <dt>Opcional</dt><dd>Marcos para Durlock (con marco de chapa). Marcos revestidos en madera solo para tabiques de 12 y 15 cm. Puertas dobles en todos los modelos.</dd>
+        </dl>
+      </div>
+    </div>
+  </div>
+  <div class="folio"><span class="l"><img src="img/logo.png" alt=""></span><span>Línea 2000 · 06</span></div>
+</section>
+
+<!-- 07 LÍNEA 2006 -->
+<section class="page lp">
+  <div class="hero" style="background-image:url('img/amb-2006.jpg')"></div>
+  <div class="htop"><img src="img/logo.png" alt=""><img class="g" src="img/gromanti.png" alt=""></div>
+  <div class="head">
+    <div><div class="eyebrow">Línea 04</div><h2>2006</h2></div>
+    <div class="tag">Lisa con buñas<br>para pintar o lustrar</div>
+  </div>
+  <div class="body">
+    <p class="lead">Placa lisa con <b>buñas horizontales o verticales</b>. En MDF para pintar o enchapada para lustrar. Nuevo modelo <b>CAE</b> con buñas verticales.</p>
+    <div class="doors" style="height:74mm">
+      <div class="door"><img src="img/m2006-sofia.jpg" alt=""><b>Sofía<small>con buñas</small></b></div>
+      <div class="door"><img src="img/m2006-americana.jpg" alt=""><b>Americana<small>con buñas</small></b></div>
+      <div class="door"><img src="img/m2006-monica.jpg" alt=""><b>Mónica<small>con buñas</small></b></div>
+      <div class="door"><img src="img/m2006-americana2.jpg" alt=""><b>Americana 2<small>insertos de aluminio</small></b></div>
+      <div class="door"><img src="img/m2006-cae.jpg" alt=""><b>CAE · nuevo<small>buñas verticales</small></b></div>
+    </div>
+    <div class="sec-tit" style="margin:5mm 0 2.5mm"><h3>Enchapados</h3><div class="rule"></div></div>
+    <div class="swatches">
+      <div class="sw"><i style="background-image:url('img/ench-cerejeira.jpg');height:10mm"></i><span>Cerejeira</span></div>
+      <div class="sw"><i style="background-image:url('img/ench-caoba.jpg');height:10mm"></i><span>Caoba</span></div>
+      <div class="sw"><i style="background-image:url('img/ench-cedrillo.jpg');height:10mm"></i><span>Cedrillo</span></div>
+      <div class="sw"><i style="background-image:url('img/ench-sabugueiro.jpg');height:10mm"></i><span>Sabugueiro</span></div>
+      <div class="sw"><i style="background-image:url('img/ench-mdf.jpg');height:10mm"></i><span>MDF p/ pintar</span></div>
+    </div>
+    <div class="ficha" style="margin-top:4.5mm">
+      <div>
+        <h4>Ficha técnica · <span>De abrir</span></h4>
+        <dl>
+          <dt>Hoja</dt><dd>Bastidor de <b>pino clear</b> estacionado y panel <b>nido de abejas</b>. Emplacada en MDF de 5,5 mm (opcional 9 o 12 mm), para pintar o enchapada. Doble faz de 43 mm.</dd>
+          <dt>Marco</dt><dd>Chapa DD N° 18 o madera.</dd>
+          <dt>Cierre</dt><dd>Cerradura común. Bisagras pomela de 3 tornillos, zincadas o bronce.</dd>
+          <dt>Opcional</dt><dd>Marcos para Durlock (con marco de chapa).</dd>
+        </dl>
+      </div>
+      <div>
+        <h4>Ficha técnica · <span>De embutir</span></h4>
+        <dl>
+          <dt>Hoja</dt><dd>Igual a la de abrir. Doble faz de 43 mm.</dd>
+          <dt>Marco</dt><dd>Marco y nicho de chapa N° 18 revestido con metal desplegado o madera.</dd>
+          <dt>Cierre</dt><dd>Cerraduras y cubetas embutidas.</dd>
+          <dt>Rodamiento</dt><dd>2 carros de 2 ruedas de nylon.</dd>
+          <dt>Opcional</dt><dd>Marcos para Durlock. Revestidos en madera solo para tabiques de 12 y 15 cm.</dd>
+        </dl>
+      </div>
+    </div>
+  </div>
+  <div class="folio"><span class="l"><img src="img/logo.png" alt=""></span><span>Línea 2006 · 07</span></div>
+</section>
+
+<!-- 08 MASONITE -->
+<section class="page lp">
+  <div class="hero" style="background-image:url('img/amb-masonite.jpg')"></div>
+  <div class="htop"><img src="img/logo.png" alt=""><img class="g" src="img/gromanti.png" alt=""></div>
+  <div class="head">
+    <div><div class="eyebrow">Línea 05</div><h2>Masonite</h2></div>
+    <div class="tag">Paneles moldeados<br>y texturados</div>
+  </div>
+  <div class="body">
+    <p class="lead">Placas con <b>paneles moldeados en HDF</b> y superficie texturada tipo madera. Vienen prepintadas, listas para laca o pintura del color que quieras.</p>
+    <div class="doors" style="height:80mm">
+      <div class="door"><img src="img/mas-mariel-blanca.jpg" alt=""><b>Mariel</b></div>
+      <div class="door"><img src="img/m2000-avalon.jpg" alt=""><b>Avalon</b></div>
+      <div class="door"><img src="img/mas-camden.jpg" alt=""><b>Camden</b></div>
+      <div class="door"><img src="img/mas-colonial.jpg" alt=""><b>Colonial</b></div>
+      <div class="door"><img src="img/mas-mariel.jpg" alt=""><b>Mariel<small>pintada</small></b></div>
+    </div>
+    <div class="ficha">
+      <div>
+        <h4>Ficha técnica · <span>De abrir</span></h4>
+        <dl>
+          <dt>Hoja</dt><dd>Bastidor de <b>pino clear</b> estacionado y panel <b>nido de abejas</b>, emplacada con paneles moldeados <b>en HDF</b>. Molduras profundas y superficie texturada. Prepintada. Doble faz de 43 mm.</dd>
+          <dt>Marco</dt><dd>Chapa DD N° 18, 22, 24 o madera.</dd>
+          <dt>Cierre</dt><dd>Cerradura común. Bisagras pomela de 3 tornillos, zincadas o bronce.</dd>
+          <dt>Opcional</dt><dd>Marcos para Durlock (con marco de chapa). Puertas dobles en todas las medidas, para tabiques de 10 o 15 cm.</dd>
+        </dl>
+      </div>
+      <div>
+        <h4>Ficha técnica · <span>De embutir</span></h4>
+        <dl>
+          <dt>Hoja</dt><dd>Construcción similar a la de abrir.</dd>
+          <dt>Marco</dt><dd>Marco y nicho de chapa DD N° 18 revestido con metal desplegado o madera.</dd>
+          <dt>Cierre</dt><dd>Cerraduras y cubetas embutidas.</dd>
+          <dt>Rodamiento</dt><dd>De nylon o a rulemán, para un deslizamiento más suave y silencioso.</dd>
+          <dt>Opcional</dt><dd>Marcos revestidos en madera, solo para tabiques de 12 y 15 cm.</dd>
+        </dl>
+      </div>
+    </div>
+  </div>
+  <div class="folio"><span class="l"><img src="img/logo.png" alt=""></span><span>Línea Masonite · 08</span></div>
+</section>
+
+<!-- 09 CLÁSICA -->
+<section class="page lp">
+  <div class="hero" style="background-image:url('img/amb-clasica.jpg')"></div>
+  <div class="htop"><img src="img/logo.png" alt=""><img class="g" src="img/gromanti.png" alt=""></div>
+  <div class="head">
+    <div><div class="eyebrow">Línea 06</div><h2>Clásica</h2></div>
+    <div class="tag">La puerta placa<br>de siempre</div>
+  </div>
+  <div class="body">
+    <div style="display:grid; grid-template-columns:84mm 1fr; gap:7mm">
+      <div class="doors" style="justify-content:space-evenly; height:84mm; overflow:hidden">
+        <div class="door"><img src="img/clasica-enchapada.jpg" alt=""><b>Enchapada</b></div>
+        <div class="door"><img src="img/clasica-blanca.jpg" alt=""><b>Para pintar</b></div>
+      </div>
+      <div>
+        <p class="lead">La puerta placa tradicional: <b>buena calidad a un precio accesible</b>. En MDF para pintar o enchapada en madera para lustrar.</p>
+        <div class="sec-tit" style="margin:0 0 2.5mm"><h3>Enchapados</h3><div class="rule"></div></div>
+        <div class="swatches">
+          <div class="sw"><i style="background-image:url('img/ench-cerejeira.jpg');height:42mm"></i><span>Cerejeira</span></div>
+          <div class="sw"><i style="background-image:url('img/ench-caoba.jpg');height:42mm"></i><span>Caoba</span></div>
+          <div class="sw"><i style="background-image:url('img/ench-cedrillo.jpg');height:42mm"></i><span>Cedrillo</span></div>
+          <div class="sw"><i style="background-image:url('img/ench-sabugueiro.jpg');height:42mm"></i><span>Sabugueiro</span></div>
+          <div class="sw"><i style="background-image:url('img/ench-mdf.jpg');height:42mm"></i><span>MDF p/ pintar</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="ficha">
+      <div>
+        <h4>Ficha técnica · <span>De abrir</span></h4>
+        <dl>
+          <dt>Hoja</dt><dd>Bastidor perimetral de <b>pino</b> y panel <b>nido de abejas</b>. Emplacada en MDF de <b>3, 5,5, 9 o 12 mm</b> para pintar, o enchapada en caoba, cedrillo, cerejeira o sabugueiro para lustrar. Doble faz de 43 mm.</dd>
+          <dt>Marco</dt><dd>Chapa DD N° 18, 22, 24 o madera.</dd>
+          <dt>Cierre</dt><dd>Cerradura común. Bisagras pomela de 3 tornillos, zincadas o bronce.</dd>
+          <dt>Opcional</dt><dd>Marcos para Durlock (con marco de chapa). Puertas dobles en todas las medidas, para tabiques de 10 o 15 cm. Ojos de buey o aberturas cuadradas.</dd>
+        </dl>
+      </div>
+      <div>
+        <h4>Ficha técnica · <span>De embutir</span></h4>
+        <dl>
+          <dt>Hoja</dt><dd>Construcción similar a la de abrir. Doble faz de 43 mm.</dd>
+          <dt>Marco</dt><dd>Marco y nicho de chapa DD N° 18 revestido con metal desplegado o madera.</dd>
+          <dt>Cierre</dt><dd>Cerraduras y cubetas embutidas.</dd>
+          <dt>Rodamiento</dt><dd>2 carros de 2 ruedas de nylon.</dd>
+          <dt>Opcional</dt><dd>Marcos para Durlock. Revestidos en madera solo para tabiques de 12 y 15 cm. Puertas dobles en todas las medidas.</dd>
+        </dl>
+      </div>
+    </div>
+  </div>
+  <div class="folio"><span class="l"><img src="img/logo.png" alt=""></span><span>Línea Clásica · 09</span></div>
+</section>
+
+<!-- 10 MEDIDAS -->
+<section class="page">
+  <div class="pad">
+    <div class="eyebrow">Especificaciones técnicas</div>
+    <h2 style="font-family:'Barlow Condensed'; font-weight:400; text-transform:uppercase; font-size:24pt; line-height:1; letter-spacing:.04em; margin:3mm 0 3mm">Medidas</h2>
+    <p style="font-size:9pt; color:#bdbab3; margin:0 0 6mm; line-height:1.55">Todas las medidas en milímetros. Si tu vano no coincide con ninguna, consultanos: te ayudamos a elegir la que corresponde.</p>
+
+    <div class="sec-tit"><h3>Líneas Clásica · 2000 · 2006 · Masonite</h3><div class="rule"></div></div>
+    <div class="med">
+      <div class="mt">
+        <h5>De abrir · doble contacto</h5><div class="s">Marco de chapa</div>
+        <table>
+          <tr><th>Ancho int.</th><td>600</td><td>700</td><td>830</td><td>900</td></tr>
+          <tr><th>Ancho ext.</th><td>660</td><td>760</td><td>890</td><td>960</td></tr>
+          <tr><th>Alto c/marco</th><td class="alt" colspan="4">2043</td></tr>
+        </table>
+      </div>
+      <div class="mt">
+        <h5>De abrir · simple contacto</h5><div class="s">Marco de chapa</div>
+        <table>
+          <tr><th>Ancho int.</th><td>620</td><td>720</td><td>870</td><td>920</td></tr>
+          <tr><th>Ancho ext.</th><td>680</td><td>780</td><td>930</td><td>980</td></tr>
+          <tr><th>Alto c/marco</th><td class="alt" colspan="4">2043</td></tr>
+        </table>
+      </div>
+      <div class="mt">
+        <h5>De abrir · doble contacto</h5><div class="s">Marco de madera</div>
+        <table>
+          <tr><th>Ancho int.</th><td>600</td><td>700</td><td>830</td><td>900</td></tr>
+          <tr><th>Ancho ext.</th><td>645</td><td>745</td><td>875</td><td>945</td></tr>
+          <tr><th>Alto c/marco</th><td class="alt" colspan="4">2030</td></tr>
+        </table>
+        <div class="nota">Para tabiques de 10, 12 o 15 cm.</div>
+      </div>
+      <div class="mt">
+        <h5>De abrir · simple contacto</h5><div class="s">Marco de madera</div>
+        <table>
+          <tr><th>Ancho int.</th><td>620</td><td>720</td><td>820</td><td>920</td></tr>
+          <tr><th>Ancho ext.</th><td>670</td><td>770</td><td>870</td><td>970</td></tr>
+          <tr><th>Alto c/marco</th><td class="alt" colspan="4">2030</td></tr>
+        </table>
+        <div class="nota">Para tabiques de 10, 12 o 15 cm.</div>
+      </div>
+      <div class="mt" style="grid-column:1 / -1">
+        <h5>De embutir</h5><div class="s">Marco de chapa y madera</div>
+        <table>
+          <tr><th>Ancho int.</th><td>600</td><td>700</td><td>800</td><td>900</td></tr>
+          <tr><th>Ancho ext.</th><td>1260</td><td>1460</td><td>1660</td><td>1860</td></tr>
+          <tr><th>Alto c/marco</th><td class="alt" colspan="4">2040</td></tr>
+        </table>
+        <div class="nota">Para tabiques de 10 o 15 cm. Con marco de madera, tabique de 15 cm.</div>
+      </div>
+    </div>
+
+    <div class="sec-tit" style="margin-top:7mm"><h3>Línea Elite</h3><div class="rule"></div></div>
+    <div class="med">
+      <div class="mt">
+        <h5>De abrir · simple contacto</h5><div class="s">Marco de chapa</div>
+        <table>
+          <tr><th>Ancho int.</th><td>620</td><td>720</td><td>870</td><td>920</td></tr>
+          <tr><th>Ancho ext.</th><td>680</td><td>780</td><td>930</td><td>980</td></tr>
+          <tr><th>Alto c/marco</th><td class="alt" colspan="4">2043</td></tr>
+        </table>
+        <div class="nota">Marco de chapa de 10, 12 y 15 cm.</div>
+      </div>
+      <div class="mt">
+        <h5>De abrir · simple contacto</h5><div class="s">Marco de madera</div>
+        <table>
+          <tr><th>Ancho int.</th><td>620</td><td>720</td><td>860</td><td>920</td></tr>
+          <tr><th>Ancho ext.</th><td>670</td><td>770</td><td>920</td><td>970</td></tr>
+          <tr><th>Alto c/marco</th><td class="alt" colspan="4">2030</td></tr>
+        </table>
+        <div class="nota">Marco de madera de 9 y 14 cm. Contramarco regulable de 1 a 3 cm. Opcional: acople de 5 y de 10 cm.</div>
+      </div>
+    </div>
+  </div>
+  <div class="folio"><span class="l"><img src="img/logo.png" alt=""></span><span>Medidas · 10</span></div>
+</section>
+
+<!-- 11 CONTRATAPA -->
+<section class="page back">
+  <div class="grid"></div>
+  <div class="glow"></div>
+  <div class="row">
+    <img src="img/elite-blanco.jpg" alt="">
+    <img src="img/elite-teka.jpg" alt="">
+    <img src="img/m2006-americana2.jpg" alt="">
+    <img src="img/elite-ebano.jpg" alt="">
+    <img src="img/elite-fresno.jpg" alt="">
+  </div>
+  <div class="center">
+    <img class="logo" src="img/logo.png" alt="Aluwal Aberturas">
+    <h2>Pedí tu presupuesto<br>sin cargo</h2>
+    <div class="contacto">
+      <dl>
+        <dt>WhatsApp</dt><dd>11 2394-8049</dd>
+        <dt>Email</dt><dd>aluwalaberturas@gmail.com</dd>
+        <dt>Fábrica</dt><dd>Estanislao López 561, Pilar Centro</dd>
+        <dt>Web</dt><dd>aluwalaberturas.com</dd>
+        <dt>Instagram</dt><dd>@aluwal.arg</dd>
+      </dl>
+      <div>
+        <div class="qr" id="qr"></div>
+        <div class="qr-cap">Escaneá y escribinos</div>
+      </div>
+    </div>
+  </div>
+  <div class="legal">
+    <span>Aluwal Aberturas · Distribuidor oficial Gromanti. Especificaciones según fábrica; pueden cambiar sin previo aviso. Las imágenes son ilustrativas y los colores pueden variar respecto del producto real.</span>
+    <img src="img/gromanti.png" alt="Gromanti">
+  </div>
+</section>
+
+<script>
+  new QRCode(document.getElementById('qr'), { text:'https://wa.me/5491123948049', width:256, height:256, colorDark:'#0b0b0c', colorLight:'#ffffff', correctLevel:QRCode.CorrectLevel.M });
+</script>
+</body>
+</html>
