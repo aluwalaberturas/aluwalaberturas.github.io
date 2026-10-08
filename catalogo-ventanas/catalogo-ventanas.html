@@ -1,0 +1,524 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ventanas de Aluminio · Aluwal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500;600&family=Barlow+Condensed:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+  :root { --gold:#c9a96e; --bg:#0b0b0c; --panel:#141416; --line:#2a2a2e; --txt:#e8e6e1; --muted:#8a8780; --light:#e9e8e4; }
+  * { box-sizing:border-box; }
+  html, body { margin:0; background:#050505; color:var(--txt); font-family:Barlow, sans-serif; }
+  body { padding:24px 16px 60px; display:flex; flex-direction:column; align-items:center; gap:24px; }
+
+  .tools { display:flex; gap:10px; align-items:center; }
+  .tools span { font-family:'Barlow Condensed'; letter-spacing:.25em; text-transform:uppercase; font-size:13px; color:var(--muted); }
+  .tools button { font-family:'Barlow Condensed'; text-transform:uppercase; letter-spacing:.15em; font-size:13px; background:var(--gold); color:#111; border:1px solid var(--gold); padding:9px 18px; cursor:pointer; }
+
+  .page { width:210mm; height:297mm; position:relative; overflow:hidden; background:var(--bg); box-shadow:0 10px 40px rgba(0,0,0,.6); }
+  .pad { position:absolute; inset:14mm 14mm 18mm; display:flex; flex-direction:column; }
+  .eyebrow { font-family:'Barlow Condensed'; text-transform:uppercase; letter-spacing:.35em; font-size:8.5pt; color:var(--gold); }
+  .rule { width:22mm; height:1px; background:var(--gold); }
+  .folio { position:absolute; left:14mm; right:14mm; bottom:8mm; display:flex; justify-content:space-between; align-items:center; font-family:'Barlow Condensed'; text-transform:uppercase; letter-spacing:.3em; font-size:7.5pt; color:var(--muted); }
+  .folio img { height:4.6mm; opacity:.85; }
+  .sec-tit { display:flex; align-items:baseline; gap:4mm; margin:0 0 3.5mm; }
+  .sec-tit h3 { font-family:'Barlow Condensed'; font-weight:400; text-transform:uppercase; letter-spacing:.18em; font-size:11.5pt; margin:0; white-space:nowrap; }
+  .sec-tit .rule { flex:1; background:var(--line); }
+  h2.big { font-family:'Barlow Condensed'; font-weight:400; text-transform:uppercase; font-size:24pt; line-height:1; letter-spacing:.04em; margin:3mm 0 5mm; }
+
+  /* ---------- Tapa ---------- */
+  .cover .photo { position:absolute; inset:0; background:url('img/amb-cover.jpg') 51% center/cover; filter:brightness(.85) saturate(.8); }
+  .cover .shade { position:absolute; inset:0; background:linear-gradient(180deg, rgba(11,11,12,.9) 0%, rgba(11,11,12,.25) 28%, rgba(11,11,12,.2) 50%, rgba(11,11,12,.98) 80%); }
+  .cover .top { position:absolute; top:16mm; left:16mm; right:16mm; display:flex; justify-content:space-between; align-items:flex-start; }
+  .cover .top img { height:13mm; }
+  .cover .bottom { position:absolute; left:16mm; right:16mm; bottom:18mm; }
+  .cover h1 { font-family:'Barlow Condensed'; font-weight:500; font-size:70pt; line-height:.9; letter-spacing:.02em; margin:5mm 0 0; text-transform:uppercase; }
+  .cover h1 em { font-style:normal; font-weight:300; color:var(--gold); }
+  .cover .sub { margin-top:6mm; font-family:'Barlow Condensed'; text-transform:uppercase; letter-spacing:.3em; font-size:11pt; color:#cfccc5; }
+  .cover .tags { margin-top:8mm; display:flex; gap:3mm; flex-wrap:wrap; }
+  .cover .tags span { border:1px solid rgba(201,169,110,.6); font-family:'Barlow Condensed'; text-transform:uppercase; letter-spacing:.2em; font-size:8pt; padding:2mm 3.5mm; }
+  .dist { display:flex; align-items:center; gap:5mm; margin-top:10mm; padding-top:6mm; border-top:1px solid var(--line); }
+  .dist span { font-family:'Barlow Condensed'; text-transform:uppercase; letter-spacing:.3em; font-size:8pt; color:var(--gold); line-height:1.5; }
+  .dist img { height:5.5mm; }
+
+  /* ---------- Presentación ---------- */
+  .p2 .intro { display:grid; grid-template-columns:1fr 68mm; gap:9mm; }
+  .p2 p { font-size:9.6pt; line-height:1.6; color:#c9c6bf; margin:0 0 3mm; }
+  .p2 p b { color:var(--txt); font-weight:500; }
+  .badge { border:1px solid var(--line); border-left:2px solid var(--gold); background:var(--panel); padding:7mm 6mm; display:flex; flex-direction:column; gap:4mm; justify-content:center; }
+  .badge img { width:100%; }
+  .badge p { font-size:8.5pt !important; margin:0 !important; }
+  .lineas { margin-top:auto; display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:5mm; }
+  .lin { background:var(--panel); border:1px solid var(--line); display:flex; flex-direction:column; }
+  .lin .pic { height:56mm; background:var(--light); display:flex; align-items:flex-end; justify-content:center; gap:1.5mm; padding:4mm 2mm 0; }
+  .lin .pic { overflow:hidden; }
+  .lin .pic img { height:95%; max-width:48%; object-fit:contain; object-position:bottom; mix-blend-mode:multiply; }
+  .lin .t { padding:3mm 3.5mm 3.5mm; }
+  .lin .t .n { font-family:'Barlow Condensed'; font-weight:300; color:var(--gold); font-size:8.5pt; letter-spacing:.2em; }
+  .lin .t h4 { font-family:'Barlow Condensed'; font-weight:500; text-transform:uppercase; letter-spacing:.08em; font-size:11.5pt; margin:.5mm 0 1mm; }
+  .lin .t p { font-size:7.4pt; line-height:1.38; color:#a9a69f; margin:0; }
+
+  /* ---------- Página de línea ---------- */
+  .lp .hero { position:absolute; top:0; left:0; right:0; height:96mm; background-size:cover; background-position:center; filter:saturate(.85); }
+  .lp .hero::after { content:''; position:absolute; inset:0; background:linear-gradient(180deg, rgba(11,11,12,.55) 0%, rgba(11,11,12,0) 30%, rgba(11,11,12,.2) 60%, rgba(11,11,12,1) 100%); }
+  .lp .htop { position:absolute; top:12mm; left:14mm; right:14mm; display:flex; justify-content:space-between; align-items:center; }
+  .lp .htop img { height:8mm; }
+  .lp .htop img.g { height:3.6mm; opacity:.85; }
+  .lp .head { position:absolute; top:66mm; left:14mm; right:14mm; display:flex; justify-content:space-between; align-items:flex-end; }
+  .lp .head h2 { font-family:'Barlow Condensed'; text-transform:uppercase; letter-spacing:.04em; font-size:40pt; font-weight:500; margin:2mm 0 0; line-height:.9; }
+  .lp .head .tag { font-family:'Barlow Condensed'; text-transform:uppercase; letter-spacing:.25em; font-size:8.5pt; color:#cfccc5; text-align:right; line-height:1.6; }
+  .lp .body { position:absolute; top:104mm; left:14mm; right:14mm; bottom:16mm; display:flex; flex-direction:column; }
+  .lead { font-size:9.3pt; line-height:1.58; color:#c9c6bf; margin:0 0 5mm; }
+  .lead b { color:var(--txt); font-weight:500; }
+
+  .doors { background:var(--light); display:flex; justify-content:space-around; align-items:flex-end; padding:5mm 3mm 0; height:66mm; flex:none; position:relative; }
+  .doors::after { content:''; position:absolute; left:0; right:0; bottom:0; height:13mm; background:#d9d8d4; z-index:0; }
+  .door { display:flex; flex-direction:column; align-items:center; height:100%; position:relative; z-index:1; }
+  .door img { height:calc(100% - 9mm); mix-blend-mode:multiply; }
+  .door b { font-family:'Barlow Condensed'; font-weight:500; text-transform:uppercase; letter-spacing:.16em; font-size:7.4pt; color:#3a3936; margin-top:2mm; text-align:center; line-height:1.1; white-space:nowrap; }
+  .door b small { display:block; font-weight:400; letter-spacing:.08em; font-size:5.8pt; color:#77746d; }
+  .doors + .doors { margin-top:3mm; }
+
+  .feat { list-style:none; margin:0; padding:0; font-size:8.4pt; }
+  .feat li { padding:1.9mm 0; border-top:1px solid var(--line); display:flex; gap:3mm; color:var(--txt); line-height:1.35; }
+  .feat li::before { content:''; width:3mm; height:1px; background:var(--gold); margin-top:2mm; flex:none; }
+  .feat li span { color:#bdbab3; }
+  .feat.cols { columns:2; column-gap:7mm; }
+  .feat.cols li { break-inside:avoid; }
+
+  .ficha dl { margin:0; display:grid; grid-template-columns:22mm 1fr; font-size:7.8pt; line-height:1.42; }
+  .ficha dt { font-family:'Barlow Condensed'; text-transform:uppercase; letter-spacing:.2em; font-size:6.8pt; color:var(--gold); padding:1.6mm 0; border-top:1px solid var(--line); }
+  .ficha dd { margin:0; color:#bdbab3; padding:1.6mm 0; border-top:1px solid var(--line); }
+  .ficha dd b { color:var(--txt); font-weight:500; }
+  .ficha h4 { font-family:'Barlow Condensed'; font-weight:400; text-transform:uppercase; letter-spacing:.12em; font-size:10.5pt; margin:0 0 1.5mm; }
+
+  /* Tabla de disponibilidad */
+  .disp { width:100%; border-collapse:collapse; font-size:7.8pt; }
+  .disp th { font-family:'Barlow Condensed'; font-weight:500; text-transform:uppercase; letter-spacing:.1em; font-size:7.6pt; color:var(--gold); padding:0 1mm 1.8mm; border-bottom:1px solid var(--gold); text-align:center; white-space:nowrap; }
+  .disp th:first-child { text-align:left; color:var(--muted); font-weight:400; letter-spacing:.2em; font-size:6.6pt; }
+  .disp td { padding:1.35mm 1mm; border-bottom:1px solid var(--line); text-align:center; color:var(--txt); }
+  .disp td:first-child { text-align:left; font-family:'Barlow Condensed'; letter-spacing:.08em; color:#bdbab3; white-space:nowrap; }
+  .disp td.x::after { content:''; display:inline-block; width:1.6mm; height:1.6mm; border-radius:50%; background:var(--gold); }
+  .disp-nota { font-size:6.8pt; color:var(--muted); margin-top:2mm; }
+
+  .box { border:1px solid var(--line); border-left:2px solid var(--gold); background:var(--panel); padding:4.5mm 5mm; font-size:8pt; line-height:1.5; color:#bdbab3; }
+  .box b { color:var(--txt); font-weight:500; }
+  .pic-light { background:var(--light); display:flex; align-items:center; justify-content:center; }
+  .pic-light img { max-width:100%; max-height:100%; mix-blend-mode:multiply; }
+  .photo-card { position:relative; background-size:cover; background-position:center; }
+  .photo-card::after { content:''; position:absolute; inset:0; background:linear-gradient(180deg, rgba(11,11,12,0) 50%, rgba(11,11,12,.92) 100%); }
+  .photo-card .t { position:absolute; left:4mm; right:4mm; bottom:4mm; z-index:1; }
+  .photo-card h4 { font-family:'Barlow Condensed'; font-weight:500; text-transform:uppercase; font-size:15pt; letter-spacing:.04em; margin:1mm 0 .5mm; line-height:1; }
+  .photo-card p { font-size:7.6pt; color:#cfccc5; margin:0; line-height:1.4; }
+
+  .acc { display:grid; grid-template-columns:repeat(4,1fr); gap:3mm; }
+  .acc div { background:var(--light); height:20mm; display:flex; align-items:center; justify-content:center; padding:2mm; }
+  .acc img { max-width:100%; max-height:100%; }
+
+  /* Manos */
+  .manos { display:grid; grid-template-columns:repeat(4,1fr); gap:4mm; }
+  .mano { border:1px solid var(--line); background:var(--panel); padding:3mm; text-align:center; }
+  .mano svg { width:100%; height:auto; display:block; }
+  .mano b { display:block; font-family:'Barlow Condensed'; font-weight:500; text-transform:uppercase; letter-spacing:.14em; font-size:7.6pt; margin-top:2mm; }
+  .mano small { display:block; font-family:'Barlow Condensed'; text-transform:uppercase; letter-spacing:.14em; font-size:6.4pt; color:var(--muted); margin-top:.5mm; }
+
+  /* Contratapa */
+  .back .grid { position:absolute; inset:0; background:
+      linear-gradient(90deg, rgba(201,169,110,.06) 1px, transparent 1px) 0 0/21mm 21mm,
+      linear-gradient(rgba(201,169,110,.06) 1px, transparent 1px) 0 0/21mm 21mm; }
+  .back .glow { position:absolute; right:-30mm; top:0; width:190mm; height:150mm; background:radial-gradient(closest-side, rgba(201,169,110,.12), transparent); }
+  .back .row { position:absolute; top:24mm; left:16mm; right:16mm; display:flex; justify-content:center; align-items:flex-end; gap:5mm; height:66mm; }
+  .back .row img { height:100%; filter:drop-shadow(0 6mm 10mm rgba(0,0,0,.6)); }
+  .back .row img:nth-child(odd) { height:92%; }
+  .back .center { position:absolute; left:16mm; right:16mm; bottom:34mm; }
+  .back .center img.logo { height:16mm; }
+  .back h2 { font-family:'Barlow Condensed'; font-weight:400; text-transform:uppercase; font-size:24pt; line-height:1.05; letter-spacing:.04em; margin:8mm 0 7mm; max-width:140mm; }
+  .contacto { display:grid; grid-template-columns:1fr 30mm; gap:8mm; align-items:end; border-top:1px solid var(--line); padding-top:7mm; }
+  .contacto dl { margin:0; display:grid; grid-template-columns:24mm 1fr; row-gap:2.6mm; font-size:9.5pt; }
+  .contacto dt { font-family:'Barlow Condensed'; text-transform:uppercase; letter-spacing:.25em; font-size:7.5pt; color:var(--gold); padding-top:.6mm; }
+  .contacto dd { margin:0; }
+  .qr { background:#fff; padding:2mm; width:30mm; height:30mm; }
+  .qr img, .qr canvas { width:100% !important; height:100% !important; display:block; }
+  .qr-cap { font-family:'Barlow Condensed'; text-transform:uppercase; letter-spacing:.2em; font-size:6.5pt; color:var(--muted); text-align:center; margin-top:2mm; }
+  .legal { position:absolute; left:16mm; right:16mm; bottom:9mm; font-size:6.5pt; color:#5d5b56; line-height:1.4; display:flex; justify-content:space-between; align-items:center; gap:8mm; }
+  .legal img { height:3mm; opacity:.5; }
+
+  @media screen and (max-width: 860px) {
+    .page { zoom:calc((100vw - 32px) / 794px); }
+  }
+  @page { size:A4; margin:0; }
+  @media print {
+    html, body { background:var(--bg); }
+    body { padding:0; gap:0; display:block; }
+    .tools { display:none; }
+    .page { box-shadow:none; page-break-after:always; break-after:page; zoom:1; }
+    * { -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+  }
+  .disp.lg td { padding:1.9mm 1mm; font-size:8.4pt; }
+
+  .gd { background:var(--light); display:grid; gap:2mm 3mm; padding:5mm 4mm 3mm; }
+  .gd figure { margin:0; display:flex; flex-direction:column; align-items:center; justify-content:flex-end; min-width:0; }
+  .gd img { max-width:100%; mix-blend-mode:multiply; object-fit:contain; }
+  .gd figcaption { font-family:'Barlow Condensed'; font-weight:500; text-transform:uppercase; letter-spacing:.14em; font-size:7pt; color:#3a3936; margin-top:1.6mm; text-align:center; line-height:1.15; white-space:nowrap; }
+  .gd figcaption small { display:block; font-weight:400; letter-spacing:.08em; font-size:5.8pt; color:#77746d; }
+  .cls { display:flex; align-items:flex-end; justify-content:space-between; gap:6mm; margin:0 0 3mm; }
+  .cls h3 { font-family:'Barlow Condensed'; font-weight:500; text-transform:uppercase; letter-spacing:.06em; font-size:19pt; line-height:1; margin:1.5mm 0 0; }
+  .cls h3 em { font-style:normal; font-weight:300; color:var(--gold); }
+  .cls .med { font-family:'Barlow Condensed'; text-transform:uppercase; letter-spacing:.2em; font-size:7.5pt; color:var(--muted); text-align:right; white-space:nowrap; }
+  .cls .med b { display:block; color:var(--txt); font-weight:400; font-size:12pt; letter-spacing:.04em; }
+  .chips { display:flex; flex-wrap:wrap; gap:1.6mm; margin:0 0 4mm; }
+  .chips span { border:1px solid var(--line); background:var(--panel); font-size:7.4pt; color:#cfccc5; padding:1.2mm 2.4mm; }
+  .bloque + .bloque { margin-top:8mm; }
+  .cmp { width:100%; border-collapse:collapse; font-size:7.6pt; }
+  .cmp th { font-family:'Barlow Condensed'; font-weight:500; text-transform:uppercase; letter-spacing:.1em; font-size:7.4pt; color:var(--gold); text-align:left; padding:0 1.5mm 2mm; border-bottom:1px solid var(--gold); }
+  .cmp td { padding:2mm 1.5mm; border-bottom:1px solid var(--line); color:#bdbab3; vertical-align:top; line-height:1.35; }
+  .cmp td:first-child { font-family:'Barlow Condensed'; text-transform:uppercase; letter-spacing:.08em; color:var(--txt); font-size:8.6pt; white-space:nowrap; }
+  .cmp td:first-child small { display:block; color:var(--muted); font-size:6.4pt; letter-spacing:.14em; }
+  .tips { display:grid; grid-template-columns:1fr 1fr; gap:6mm 8mm; }
+  .tips h4 { font-family:'Barlow Condensed'; font-weight:500; text-transform:uppercase; letter-spacing:.1em; font-size:11pt; margin:0 0 2mm; display:flex; gap:3mm; align-items:baseline; }
+  .tips h4 span { color:var(--gold); font-weight:400; }
+  .tips p { font-size:8.6pt; line-height:1.55; color:#bdbab3; margin:0; }
+  .tips p b { color:var(--txt); font-weight:500; }
+
+  .mod { display:grid; grid-template-columns:96mm 1fr; gap:6mm; align-items:stretch; }
+  .mod + .mod { margin-top:5mm; }
+  .mod .pics { background:var(--light); display:grid; grid-template-columns:1fr 1fr; gap:3mm; padding:4mm; }
+  .mod .pics figure { margin:0; display:flex; flex-direction:column; align-items:center; justify-content:flex-end; }
+  .mod .pics img { max-width:100%; max-height:44mm; object-fit:contain; }
+  .mod .pics figcaption { font-family:'Barlow Condensed'; text-transform:uppercase; letter-spacing:.2em; font-size:6.4pt; color:#77746d; margin-top:2mm; }
+  .mod .txt { display:flex; flex-direction:column; justify-content:center; border-top:1px solid var(--line); border-bottom:1px solid var(--line); padding:3mm 0; }
+  .mod .txt .n { font-family:'Barlow Condensed'; font-weight:300; color:var(--gold); font-size:9pt; letter-spacing:.2em; }
+  .mod .txt h3 { font-family:'Barlow Condensed'; font-weight:500; text-transform:uppercase; letter-spacing:.06em; font-size:17pt; margin:.5mm 0 2mm; line-height:1; }
+  .mod .txt p { font-size:8.6pt; line-height:1.5; color:#bdbab3; margin:0 0 3mm; }
+  .mod .txt p b { color:var(--txt); font-weight:500; }
+  .lineas-tag { display:flex; gap:2mm; }
+  .lineas-tag span { border:1px solid rgba(201,169,110,.55); font-family:'Barlow Condensed'; text-transform:uppercase; letter-spacing:.2em; font-size:7pt; padding:1.2mm 2.6mm; color:var(--txt); }
+  .vs { width:100%; border-collapse:collapse; font-size:8.2pt; }
+  .vs th { font-family:'Barlow Condensed'; font-weight:500; text-transform:uppercase; letter-spacing:.12em; font-size:11pt; color:var(--txt); text-align:left; padding:0 2mm 2.5mm; border-bottom:1px solid var(--gold); }
+  .vs th:first-child { width:36mm; }
+  .vs th em { font-style:normal; color:var(--gold); font-weight:300; }
+  .vs td { padding:2.2mm 2mm; border-bottom:1px solid var(--line); color:#bdbab3; vertical-align:top; line-height:1.4; }
+  .vs td:first-child { font-family:'Barlow Condensed'; text-transform:uppercase; letter-spacing:.14em; font-size:7pt; color:var(--muted); }
+  .vs td b { color:var(--txt); font-weight:500; }
+  .perfiles { display:grid; grid-template-columns:1fr 1fr; gap:5mm; }
+  .perfiles > div { background:var(--light); height:58mm; display:flex; align-items:center; justify-content:center; padding:4mm; position:relative; }
+  .perfiles img { max-height:100%; max-width:100%; }
+  .perfiles span { position:absolute; left:4mm; bottom:3mm; font-family:'Barlow Condensed'; text-transform:uppercase; letter-spacing:.2em; font-size:7.5pt; color:#3a3936; font-weight:500; }
+  .spec { width:100%; border-collapse:collapse; font-size:7.6pt; line-height:1.35; }
+  .spec th { font-family:'Barlow Condensed'; font-weight:500; text-transform:uppercase; letter-spacing:.12em; font-size:7pt; color:var(--gold); text-align:left; padding:0 1.5mm 2mm; border-bottom:1px solid var(--gold); vertical-align:bottom; }
+  .spec td { padding:2.1mm 1.5mm; border-bottom:1px solid var(--line); vertical-align:middle; color:#bdbab3; }
+  .spec td.tipo { color:var(--txt); }
+  .spec td.tipo div { display:flex; align-items:center; gap:2.5mm; }
+  .spec td.tipo i { width:15mm; height:11mm; flex:none; background:var(--light) center/contain no-repeat; background-origin:content-box; padding:1mm; }
+  .spec td.tipo b { font-family:'Barlow Condensed'; font-weight:500; text-transform:uppercase; letter-spacing:.06em; font-size:9pt; line-height:1.1; }
+  .spec td.num { white-space:nowrap; color:var(--txt); }
+  .colores { display:grid; grid-template-columns:repeat(2, max-content); gap:3mm 8mm; }
+  .colores div { display:flex; align-items:center; gap:2.5mm; font-family:'Barlow Condensed'; text-transform:uppercase; letter-spacing:.16em; font-size:8pt; white-space:nowrap; }
+  .colores i { width:10mm; height:10mm; border:1px solid var(--line); flex:none; }
+  .lead2 { font-size:9.2pt; line-height:1.58; color:#c9c6bf; margin:0 0 5mm; }
+  .lead2 b { color:var(--txt); font-weight:500; }
+  .note { font-size:7.4pt; color:var(--muted); margin-top:2.5mm; line-height:1.45; }
+  .mod.big .pics img { max-height:62mm; }
+  .linfoot { display:grid; grid-template-columns:62mm 1fr; gap:6mm; margin-top:auto; }
+  .linfoot .pf { background:var(--light); height:46mm; display:flex; align-items:center; justify-content:center; padding:3mm; }
+  .linfoot .pf img { max-height:100%; max-width:100%; }
+  .extra { display:grid; grid-template-columns:70mm 1fr; gap:6mm; align-items:stretch; }
+  .extra + .extra { margin-top:6mm; }
+  .extra .ill { background:var(--light); display:flex; align-items:center; justify-content:center; padding:5mm; height:62mm; }
+  .extra .ill svg { width:100%; height:100%; }
+  .extra .txt { border-top:1px solid var(--line); border-bottom:1px solid var(--line); padding:4mm 0; display:flex; flex-direction:column; justify-content:center; }
+  .extra .txt .n { font-family:'Barlow Condensed'; font-weight:300; color:var(--gold); font-size:9pt; letter-spacing:.2em; }
+  .extra .txt h3 { font-family:'Barlow Condensed'; font-weight:500; text-transform:uppercase; letter-spacing:.06em; font-size:17pt; margin:.5mm 0 2.5mm; line-height:1; }
+  .extra .txt p { font-size:8.8pt; line-height:1.55; color:#bdbab3; margin:0 0 2.5mm; }
+  .extra .txt p b { color:var(--txt); font-weight:500; }
+  .extra .txt .para { font-family:'Barlow Condensed'; text-transform:uppercase; letter-spacing:.18em; font-size:7pt; color:var(--muted); }
+</style>
+</head>
+<body>
+
+<div class="tools">
+  <span>Ventanas de aluminio · 8 páginas A4</span>
+  <button onclick="window.print()">Guardar PDF</button>
+</div>
+
+<section class="page cover">
+  <div class="photo" style="background-image:url('img/amb-esquina.jpg'); background-position:50% center"></div>
+  <div class="shade"></div>
+  <div class="top">
+    <img src="img/logo.png" alt="Aluwal Aberturas">
+    <div class="eyebrow">Catálogo 2026</div>
+  </div>
+  <div class="bottom">
+    <div class="rule"></div>
+    <h1>Ventanas<br><em>de aluminio</em></h1>
+    <div class="sub">Líneas Módena y A30 · fabricación propia</div>
+    <div class="tags">
+      <span>Corrediza</span><span>De abrir</span><span>Oscilobatiente</span><span>Banderola</span><span>Brazo de empuje</span><span>Patagónica</span><span>Paño fijo</span>
+    </div>
+    <div class="dist">
+      <span>Perfilería<br>Aluar</span>
+      <b style="font-family:'Barlow Condensed'; font-weight:400; font-size:11pt; letter-spacing:.2em; text-transform:uppercase; color:#cfccc5">Hecho en nuestro taller de Pilar</b>
+    </div>
+  </div>
+</section>
+<section class="page">
+  <div class="pad">
+    <div class="eyebrow">Ventanas de aluminio</div>
+    <h2 class="big">Dos líneas,<br>hechas a medida</h2>
+    <p class="lead2">Fabricamos en nuestro taller de Pilar con perfilería <b>Aluar</b>, a la medida de cada vano. Trabajamos dos líneas: <b>Módena</b>, la clásica y más usada en obra, y <b>A30</b>, para cuando se busca más hermeticidad y vidrios más gruesos.</p>
+    <div class="perfiles">
+      <div><img src="img/perfil-modena.png" alt=""><span>Módena · 45 mm</span></div>
+      <div><img src="img/perfil-a30.png" alt=""><span>A30 · 60 mm</span></div>
+    </div>
+    <div class="sec-tit" style="margin-top:7mm"><h3>¿Cuál elegir?</h3><div class="rule"></div></div>
+    <table class="vs">
+      <tr><th></th><th>Módena <em>· la clásica</em></th><th>A30 <em>· más prestación</em></th></tr>
+      <tr><td>Ancho de marco</td><td><b>45 mm</b></td><td><b>60 mm</b></td></tr>
+      <tr><td>Ideal para</td><td>Casas, departamentos y locales. La más usada en obra.</td><td>Obras donde importa más el aislamiento y la terminación.</td></tr>
+      <tr><td>Estética</td><td>Líneas rectas, perfil fino.</td><td>Líneas redondeadas, perfil más robusto.</td></tr>
+      <tr><td>Hermeticidad</td><td>Doble contacto con burletes de EPDM.</td><td>Triple contacto o cámara compensadora de presiones.</td></tr>
+      <tr><td>DVH en corrediza</td><td>14 a 19 mm</td><td>20 a 24 mm</td></tr>
+      <tr><td>DVH en abrir y oscilo</td><td>18 a 32 mm</td><td>18 a 32 mm</td></tr>
+      <tr><td>Vidrio simple</td><td>4 a 10 mm (corrediza) · 4 a 16 mm (resto)</td><td>4 a 10 mm (corrediza) · 4 a 16 mm (resto)</td></tr>
+    </table>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:7mm; margin-top:auto">
+      <div><div class="sec-tit"><h3>Colores</h3><div class="rule"></div></div>
+        <div class="colores"><div><i style="background:#f3f3f1"></i>Blanco</div><div><i style="background:#141414"></i>Negro</div><div><i style="background:#8f908e"></i>Anodizado</div><div><i style="background:url('img/madera.jpg') center/cover"></i>Símil madera</div></div></div>
+      <div><div class="sec-tit"><h3>Vidrios</h3><div class="rule"></div></div>
+        <p style="font-size:8.6pt; color:#bdbab3; margin:0; line-height:1.5">Float de 4 mm, laminado de seguridad 3+3 o DVH (doble vidriado hermético).</p></div>
+    </div>
+  </div>
+  <div class="folio"><img src="img/logo.png" alt=""><span>Ventanas de aluminio · 02</span></div>
+</section>
+<section class="page">
+  <div class="pad">
+    <div class="eyebrow">Modelos</div>
+    <h2 class="big" style="margin-bottom:6mm">Tipologías</h2>
+    <div class="mod big">
+      <div class="pics">
+        <figure><img src="img/corrediza-blanca.png" alt=""><figcaption>Blanco</figcaption></figure>
+        <figure><img src="img/corrediza-negra.png" alt=""><figcaption>Negro</figcaption></figure>
+      </div>
+      <div class="txt">
+        <div class="n">01</div>
+        <h3>Corrediza</h3>
+        <p>Dos a cuatro hojas que corren sobre ruedas regulables. <b>No ocupa lugar al abrir</b>: la más elegida para livings, dormitorios y cocinas.</p>
+        <div class="lineas-tag"><span>Módena</span><span>A30</span></div>
+      </div>
+    </div>
+    <div class="mod big">
+      <div class="pics">
+        <figure><img src="img/abrir-blanca.png" alt=""><figcaption>Blanco</figcaption></figure>
+        <figure><img src="img/abrir-negra.png" alt=""><figcaption>Negro</figcaption></figure>
+      </div>
+      <div class="txt">
+        <div class="n">02</div>
+        <h3>Raja de abrir</h3>
+        <p>Una o dos hojas que abren hacia adentro sobre bisagras laterales, con falleba. <b>Ventila todo el vano</b> y cierra muy bien.</p>
+        <div class="lineas-tag"><span>Módena</span><span>A30</span></div>
+      </div>
+    </div>
+    <div class="mod big">
+      <div class="pics">
+        <figure><img src="img/oscilo-blanca.png" alt=""><figcaption>Blanco</figcaption></figure>
+        <figure><img src="img/oscilo-negra.png" alt=""><figcaption>Negro</figcaption></figure>
+      </div>
+      <div class="txt">
+        <div class="n">03</div>
+        <h3>Oscilobatiente</h3>
+        <p>Con una sola manija <b>abre de costado o se inclina arriba</b> para ventilar sin abrir del todo. Ideal para dormitorios y baños.</p>
+        <div class="lineas-tag"><span>Módena</span><span>A30</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="folio"><img src="img/logo.png" alt=""><span>Modelos · 03</span></div>
+</section>
+<section class="page">
+  <div class="pad">
+    <div class="mod">
+      <div class="pics">
+        <figure><img src="img/banderola-blanca.png" alt=""><figcaption>Blanco</figcaption></figure>
+        <figure><img src="img/banderola-negra.png" alt=""><figcaption>Negro</figcaption></figure>
+      </div>
+      <div class="txt">
+        <div class="n">04</div>
+        <h3>Banderola</h3>
+        <p>Hoja chica que se inclina hacia adentro, con el eje abajo. Para <b>baños, lavaderos</b> o arriba de otra abertura.</p>
+        <div class="lineas-tag"><span>Módena</span><span>A30</span></div>
+      </div>
+    </div>
+    <div class="mod">
+      <div class="pics">
+        <figure><img src="img/brazo-blanca.png" alt=""><figcaption>Blanco</figcaption></figure>
+        <figure><img src="img/brazo-negra.png" alt=""><figcaption>Negro</figcaption></figure>
+      </div>
+      <div class="txt">
+        <div class="n">05</div>
+        <h3>Brazo de empuje</h3>
+        <p>Abre hacia afuera con el eje arriba, sostenida por un brazo. <b>Se puede dejar abierta con lluvia</b>.</p>
+        <div class="lineas-tag"><span>Módena</span><span>A30</span></div>
+      </div>
+    </div>
+    <div class="mod">
+      <div class="pics">
+        <figure><img src="img/patagonica-blanca.png" alt=""><figcaption>Blanco</figcaption></figure>
+        <figure><img src="img/patagonica-negra.png" alt=""><figcaption>Negro</figcaption></figure>
+      </div>
+      <div class="txt">
+        <div class="n">06</div>
+        <h3>Patagónica</h3>
+        <p>Paño fijo grande combinado con una <b>hoja de abrir lateral</b>. Mucha luz y ventilación en el mismo vano.</p>
+        <div class="lineas-tag"><span>Módena</span><span>A30</span></div>
+      </div>
+    </div>
+    <div class="mod">
+      <div class="pics">
+        <figure><img src="img/fijo-blanco.png" alt=""><figcaption>Blanco</figcaption></figure>
+        <figure><img src="img/fijo-negro.png" alt=""><figcaption>Negro</figcaption></figure>
+      </div>
+      <div class="txt">
+        <div class="n">07</div>
+        <h3>Paño fijo</h3>
+        <p>No abre: <b>máxima superficie de vidrio</b> y el mejor aislamiento. Se combina con cualquier otra tipología.</p>
+        <div class="lineas-tag"><span>Módena</span><span>A30</span></div>
+      </div>
+    </div>
+    <p class="note" style="margin-top:5mm">También fabricamos ventanas desplazables y puertas de rebatir en las dos líneas. Las medidas son a pedido: medimos en obra sin cargo.</p>
+  </div>
+  <div class="folio"><img src="img/logo.png" alt=""><span>Modelos · 04</span></div>
+</section>
+<section class="page lp">
+  <div class="hero" style="background-image:url('img/amb-living.jpg'); background-position:center 55%"></div>
+  <div class="htop"><img src="img/logo.png" alt=""><span class="eyebrow">Aluminio Aluar</span></div>
+  <div class="head">
+    <div><div class="eyebrow">Línea 01</div><h2>Módena</h2></div>
+    <div class="tag">La clásica<br>marco de 45 mm</div>
+  </div>
+  <div class="body">
+    <p class="lead">La línea clásica de Aluar y la más usada en obra. <b>Buena relación entre peso y resistencia</b>, acepta DVH y resuelve casi cualquier abertura de casas, departamentos y locales.</p>
+    <table class="spec">
+      <tr><th style="width:40mm">Tipología</th><th>Descripción</th><th>Movimiento y cierre</th><th>Hermeticidad</th><th>Vidrio simple</th><th>DVH</th></tr>
+      <tr><td class="tipo"><div><i style="background-image:url('img/corrediza-blanca.png')"></i><b>Corrediza</b></div></td><td>Marco de 2 o 3 guías, de 2 a 4 hojas.</td><td>Ruedas regulables. Cierre lateral simple o multipunto.</td><td>Doble contacto, felpas con Fin Seal y caja de agua.</td><td class="num">4 a 10 mm</td><td class="num">14 a 19 mm</td></tr><tr><td class="tipo"><div><i style="background-image:url('img/abrir-blanca.png')"></i><b>De abrir / oscilo</b></div></td><td>1 o 2 hojas hacia adentro.</td><td>Bisagras laterales y falleba multipunto, o mecanismo oscilobatiente.</td><td>Doble contacto o cámara compensadora, EPDM.</td><td class="num">4 a 16 mm</td><td class="num">18 a 32 mm</td></tr><tr><td class="tipo"><div><i style="background-image:url('img/banderola-blanca.png')"></i><b>Banderola</b></div></td><td>1 hoja hacia adentro, eje abajo.</td><td>Bisagras inferiores, brazo sostén y cierre superior.</td><td>Doble contacto con burletes de EPDM.</td><td class="num">4 a 16 mm</td><td class="num">18 a 32 mm</td></tr><tr><td class="tipo"><div><i style="background-image:url('img/brazo-blanca.png')"></i><b>Brazo de empuje</b></div></td><td>1 hoja hacia afuera, eje arriba.</td><td>Bisagras superiores y brazo de empuje.</td><td>Doble contacto con burletes de EPDM.</td><td class="num">4 a 16 mm</td><td class="num">18 a 32 mm</td></tr><tr><td class="tipo"><div><i style="background-image:url('img/fijo-blanco.png')"></i><b>Paño fijo</b></div></td><td>Paño fijo con aleta lateral.</td><td>—</td><td>—</td><td class="num">4 a 16 mm</td><td class="num">18 a 32 mm</td></tr>
+    </table>
+    <p class="note">Ancho de marco 45 mm en todas las tipologías. Armado a 45° con escuadras de tracción (corrediza a 90° con tornillos). Perfilería Aluar línea Módena.</p>
+    <div class="linfoot">
+      <div class="pf"><img src="img/perfil-modena.png" alt=""></div>
+      <div class="box" style="display:flex; flex-direction:column; justify-content:center"><span class="eyebrow">Colores</span><div class="colores" style="margin:2mm 0 4mm"><div><i style="background:#f3f3f1"></i>Blanco</div><div><i style="background:#141414"></i>Negro</div><div><i style="background:#8f908e"></i>Anodizado</div><div><i style="background:url('img/madera.jpg') center/cover"></i>Símil madera</div></div><span class="eyebrow">Vidrios</span><br>Float de 4 mm, laminado 3+3 o DVH. Medimos en obra sin cargo y fabricamos a la medida de cada vano.</div>
+    </div>
+  </div>
+  <div class="folio"><img src="img/logo.png" alt=""><span>Línea Módena · 05</span></div>
+</section>
+<section class="page lp">
+  <div class="hero" style="background-image:url('img/amb-esquina.jpg'); background-position:center 28%"></div>
+  <div class="htop"><img src="img/logo.png" alt=""><span class="eyebrow">Aluminio Aluar</span></div>
+  <div class="head">
+    <div><div class="eyebrow">Línea 02</div><h2>A30</h2></div>
+    <div class="tag">Más hermética<br>marco de 60 mm</div>
+  </div>
+  <div class="body">
+    <p class="lead">Para obras donde se busca más que una línea estándar: <b>mejor hermeticidad, vidrios más gruesos y DVH</b>, con una terminación de líneas redondeadas que queda bien en casas y en edificios.</p>
+    <table class="spec">
+      <tr><th style="width:40mm">Tipología</th><th>Descripción</th><th>Movimiento y cierre</th><th>Hermeticidad</th><th>Vidrio simple</th><th>DVH</th></tr>
+      <tr><td class="tipo"><div><i style="background-image:url('img/corrediza-negra.png')"></i><b>Corrediza</b></div></td><td>Marco de 2 o 3 guías, de 2 a 4 hojas.</td><td>Ruedas regulables. Cierre lateral simple o multipunto.</td><td>Doble contacto, felpas con Fin Seal y caja de agua.</td><td class="num">4 a 10 mm</td><td class="num">20 a 24 mm</td></tr><tr><td class="tipo"><div><i style="background-image:url('img/abrir-negra.png')"></i><b>De abrir</b></div></td><td>1 o 2 hojas hacia adentro, coplanar o escalonada.</td><td>Bisagras laterales y falleba multipunto.</td><td>Triple contacto o cámara compensadora, EPDM.</td><td class="num">4 a 16 mm</td><td class="num">18 a 32 mm</td></tr><tr><td class="tipo"><div><i style="background-image:url('img/oscilo-negra.png')"></i><b>Oscilobatiente</b></div></td><td>1 o 2 hojas. Abre de costado o se inclina.</td><td>Mecanismo oscilobatiente con una sola manija.</td><td>Triple contacto o cámara compensadora, EPDM.</td><td class="num">4 a 16 mm</td><td class="num">18 a 32 mm</td></tr><tr><td class="tipo"><div><i style="background-image:url('img/banderola-negra.png')"></i><b>Banderola</b></div></td><td>1 hoja hacia adentro, eje abajo.</td><td>Brazos limitadores y falleba superior.</td><td>Cámara compensadora de presiones, EPDM.</td><td class="num">4 a 16 mm</td><td class="num">18 a 32 mm</td></tr><tr><td class="tipo"><div><i style="background-image:url('img/brazo-negra.png')"></i><b>Brazo de empuje</b></div></td><td>1 hoja hacia afuera, eje arriba.</td><td>Bisagras superiores y brazo de empuje.</td><td>Cámara compensadora de presiones, EPDM.</td><td class="num">4 a 16 mm</td><td class="num">18 a 32 mm</td></tr><tr><td class="tipo"><div><i style="background-image:url('img/fijo-negro.png')"></i><b>Paño fijo</b></div></td><td>Paño fijo con aleta lateral.</td><td>—</td><td>—</td><td class="num">4 a 16 mm</td><td class="num">18 a 32 mm</td></tr>
+    </table>
+    <p class="note">Ancho de marco 60 mm en todas las tipologías. Armado a 45° con escuadras de tracción (corrediza a 90° con tornillos). Perfilería Aluar línea A30 New.</p>
+    <div class="linfoot">
+      <div class="pf"><img src="img/perfil-a30.png" alt=""></div>
+      <div class="box" style="display:flex; flex-direction:column; justify-content:center"><span class="eyebrow">Colores</span><div class="colores" style="margin:2mm 0 4mm"><div><i style="background:#f3f3f1"></i>Blanco</div><div><i style="background:#141414"></i>Negro</div><div><i style="background:#8f908e"></i>Anodizado</div><div><i style="background:url('img/madera.jpg') center/cover"></i>Símil madera</div></div><span class="eyebrow">Vidrios</span><br>Float de 4 mm, laminado 3+3 o DVH de hasta 32 mm. Medimos en obra sin cargo y fabricamos a la medida de cada vano.</div>
+    </div>
+  </div>
+  <div class="folio"><img src="img/logo.png" alt=""><span>Línea A30 · 06</span></div>
+</section>
+<section class="page">
+  <div class="pad">
+    <div class="eyebrow">Opcionales</div>
+    <h2 class="big" style="margin-bottom:3mm">Extras</h2>
+    <p class="lead2">Se pueden sumar a cualquier ventana de las dos líneas. Te recomendamos cuál conviene según la obra.</p>
+    <div class="extra">
+      <div class="ill"><svg viewBox="0 0 120 90" fill="none" stroke-linecap="round">
+  <rect x="14" y="4" width="92" height="82" stroke="#3a3936" stroke-width="2.4"/>
+  <rect x="21" y="11" width="78" height="68" stroke="#3a3936" stroke-width="1.6" fill="#dfe6e9"/>
+  <line x1="95" y1="15" x2="95" y2="75" stroke="#b08d4f" stroke-width="1.4" stroke-dasharray="3 2.5"/>
+  <rect x="91.5" y="40" width="7" height="11" rx="1.5" fill="#3a3936"/>
+  <rect x="93.5" y="50" width="3" height="12" rx="1.2" fill="#3a3936"/>
+  <circle cx="95" cy="13.5" r="3.4" fill="#b08d4f"/><circle cx="95" cy="76.5" r="3.4" fill="#b08d4f"/>
+  <text x="104" y="16" font-size="5.5" fill="#3a3936" font-family="Barlow Condensed" stroke="none">1</text>
+  <text x="104" y="79" font-size="5.5" fill="#3a3936" font-family="Barlow Condensed" stroke="none">2</text>
+</svg></div>
+      <div class="txt"><div class="n">01</div><h3>Falleba bipunto</h3>
+        <p>Con una sola manija la hoja <b>traba en dos puntos del marco, arriba y abajo</b>. Cierra pareja en toda la altura: más hermética y más difícil de forzar.</p>
+        <div class="para">Para ventanas de abrir y oscilobatientes</div></div>
+    </div>
+    <div class="extra">
+      <div class="ill"><svg viewBox="0 0 120 90" fill="none">
+  <rect x="0" y="0" width="120" height="90" fill="#cfcac2"/>
+  <rect x="14" y="10" width="92" height="70" fill="#b08d4f"/>
+  <rect x="19" y="15" width="82" height="60" fill="#f4f3f0" stroke="#3a3936" stroke-width="2"/>
+  <rect x="25" y="21" width="34" height="48" fill="#dfe6e9" stroke="#3a3936" stroke-width="1.3"/>
+  <rect x="61" y="21" width="34" height="48" fill="#dfe6e9" stroke="#3a3936" stroke-width="1.3"/>
+  <text x="60" y="8" text-anchor="middle" font-size="5.2" fill="#3a3936" font-family="Barlow Condensed" letter-spacing=".8">PREMARCO</text>
+  <text x="60" y="87" text-anchor="middle" font-size="5.2" fill="#3a3936" font-family="Barlow Condensed" letter-spacing=".8">VENTANA</text>
+</svg></div>
+      <div class="txt"><div class="n">02</div><h3>Premarco</h3>
+        <p>Marco de aluminio que <b>se coloca en la obra antes que la ventana</b>. El albañil termina revoques y pintura, y la ventana va al final, sin golpes ni manchas. Deja el vano a escuadra y permite cambiar la ventana en el futuro sin romper.</p>
+        <div class="para">Recomendado en obra nueva</div></div>
+    </div>
+    <div class="extra">
+      <div class="ill"><svg viewBox="0 0 120 90" fill="none">
+  <rect x="2" y="20" width="40" height="46" fill="#cfcac2"/>
+  <rect x="78" y="20" width="40" height="46" fill="#cfcac2"/>
+  <rect x="42" y="52" width="36" height="14" fill="#f4f3f0" stroke="#3a3936" stroke-width="1.6"/>
+  <line x1="45" y1="59" x2="75" y2="59" stroke="#9fb4bd" stroke-width="3"/>
+  <rect x="31" y="66" width="20" height="3.5" fill="#b08d4f"/>
+  <rect x="69" y="66" width="20" height="3.5" fill="#b08d4f"/>
+  <text x="60" y="13" text-anchor="middle" font-size="5.2" fill="#3a3936" font-family="Barlow Condensed" letter-spacing=".8">EXTERIOR</text>
+  <text x="22" y="44" text-anchor="middle" font-size="5" fill="#7a756c" font-family="Barlow Condensed" letter-spacing=".8">PARED</text>
+  <text x="98" y="44" text-anchor="middle" font-size="5" fill="#7a756c" font-family="Barlow Condensed" letter-spacing=".8">PARED</text>
+  <text x="60" y="87" text-anchor="middle" font-size="5.2" fill="#3a3936" font-family="Barlow Condensed" letter-spacing=".8">INTERIOR</text>
+  <text x="41" y="77" text-anchor="middle" font-size="4.4" fill="#b08d4f" font-family="Barlow Condensed" letter-spacing=".6">CONTRAMARCO</text><text x="79" y="77" text-anchor="middle" font-size="4.4" fill="#b08d4f" font-family="Barlow Condensed" letter-spacing=".6">CONTRAMARCO</text>
+</svg></div>
+      <div class="txt"><div class="n">03</div><h3>Contramarco</h3>
+        <p>Perfil que <b>tapa la junta entre la ventana y la pared</b> del lado de adentro. Queda una terminación prolija sin tener que retocar revoque ni pintura alrededor.</p>
+        <div class="para">En el mismo color de la ventana</div></div>
+    </div>
+  </div>
+  <div class="folio"><img src="img/logo.png" alt=""><span>Extras · 07</span></div>
+</section>
+
+<section class="page back">
+  <div class="grid"></div>
+  <div class="glow"></div>
+  <div style="position:absolute; top:78mm; left:16mm; right:16mm; text-align:center">
+    <img src="img/logo.png" alt="Aluwal Aberturas" style="width:150mm">
+    <div class="eyebrow" style="margin-top:9mm; letter-spacing:.45em">Ventanas de aluminio · Pilar</div>
+  </div>
+  <div class="center">
+    <div class="rule"></div>
+    <h2>Pedí tu presupuesto<br>sin cargo</h2>
+    <div class="contacto">
+      <dl>
+        <dt>WhatsApp</dt><dd>11 2394-8049</dd>
+        <dt>Email</dt><dd>aluwalaberturas@gmail.com</dd>
+        <dt>Fábrica</dt><dd>Estanislao López 561, Pilar Centro</dd>
+        <dt>Web</dt><dd>aluwalaberturas.com</dd>
+        <dt>Instagram</dt><dd>@aluwal.arg</dd>
+      </dl>
+      <div>
+        <div class="qr" id="qr"></div>
+        <div class="qr-cap">Escaneá y escribinos</div>
+      </div>
+    </div>
+  </div>
+  <div class="legal">
+    <span>Aluwal Aberturas · Fábrica de aberturas de aluminio en Pilar. Datos técnicos según perfilería Aluar. Las imágenes son ilustrativas y los colores pueden variar respecto del producto real.</span>
+    
+  </div>
+</section>
+
+<script>
+  new QRCode(document.getElementById('qr'), { text:'https://wa.me/5491123948049', width:256, height:256, colorDark:'#0b0b0c', colorLight:'#ffffff', correctLevel:QRCode.CorrectLevel.M });
+</script>
+</body>
+</html>
