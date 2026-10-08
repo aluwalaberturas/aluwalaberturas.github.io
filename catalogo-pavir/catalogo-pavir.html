@@ -1,0 +1,606 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Puertas de Entrada · Aluwal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500;600&family=Barlow+Condensed:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+  :root { --gold:#c9a96e; --bg:#0b0b0c; --panel:#141416; --line:#2a2a2e; --txt:#e8e6e1; --muted:#8a8780; --light:#e9e8e4; }
+  * { box-sizing:border-box; }
+  html, body { margin:0; background:#050505; color:var(--txt); font-family:Barlow, sans-serif; }
+  body { padding:24px 16px 60px; display:flex; flex-direction:column; align-items:center; gap:24px; }
+
+  .tools { display:flex; gap:10px; align-items:center; }
+  .tools span { font-family:'Barlow Condensed'; letter-spacing:.25em; text-transform:uppercase; font-size:13px; color:var(--muted); }
+  .tools button { font-family:'Barlow Condensed'; text-transform:uppercase; letter-spacing:.15em; font-size:13px; background:var(--gold); color:#111; border:1px solid var(--gold); padding:9px 18px; cursor:pointer; }
+
+  .page { width:210mm; height:297mm; position:relative; overflow:hidden; background:var(--bg); box-shadow:0 10px 40px rgba(0,0,0,.6); }
+  .pad { position:absolute; inset:14mm 14mm 18mm; display:flex; flex-direction:column; }
+  .eyebrow { font-family:'Barlow Condensed'; text-transform:uppercase; letter-spacing:.35em; font-size:8.5pt; color:var(--gold); }
+  .rule { width:22mm; height:1px; background:var(--gold); }
+  .folio { position:absolute; left:14mm; right:14mm; bottom:8mm; display:flex; justify-content:space-between; align-items:center; font-family:'Barlow Condensed'; text-transform:uppercase; letter-spacing:.3em; font-size:7.5pt; color:var(--muted); }
+  .folio img { height:4.6mm; opacity:.85; }
+  .sec-tit { display:flex; align-items:baseline; gap:4mm; margin:0 0 3.5mm; }
+  .sec-tit h3 { font-family:'Barlow Condensed'; font-weight:400; text-transform:uppercase; letter-spacing:.18em; font-size:11.5pt; margin:0; white-space:nowrap; }
+  .sec-tit .rule { flex:1; background:var(--line); }
+  h2.big { font-family:'Barlow Condensed'; font-weight:400; text-transform:uppercase; font-size:24pt; line-height:1; letter-spacing:.04em; margin:3mm 0 5mm; }
+
+  /* ---------- Tapa ---------- */
+  .cover .photo { position:absolute; inset:0; background:url('img/amb-cover.jpg') 51% center/cover; filter:brightness(.85) saturate(.8); }
+  .cover .shade { position:absolute; inset:0; background:linear-gradient(180deg, rgba(11,11,12,.9) 0%, rgba(11,11,12,.25) 28%, rgba(11,11,12,.2) 50%, rgba(11,11,12,.98) 80%); }
+  .cover .top { position:absolute; top:16mm; left:16mm; right:16mm; display:flex; justify-content:space-between; align-items:flex-start; }
+  .cover .top img { height:13mm; }
+  .cover .bottom { position:absolute; left:16mm; right:16mm; bottom:18mm; }
+  .cover h1 { font-family:'Barlow Condensed'; font-weight:500; font-size:70pt; line-height:.9; letter-spacing:.02em; margin:5mm 0 0; text-transform:uppercase; }
+  .cover h1 em { font-style:normal; font-weight:300; color:var(--gold); }
+  .cover .sub { margin-top:6mm; font-family:'Barlow Condensed'; text-transform:uppercase; letter-spacing:.3em; font-size:11pt; color:#cfccc5; }
+  .cover .tags { margin-top:8mm; display:flex; gap:3mm; flex-wrap:wrap; }
+  .cover .tags span { border:1px solid rgba(201,169,110,.6); font-family:'Barlow Condensed'; text-transform:uppercase; letter-spacing:.2em; font-size:8pt; padding:2mm 3.5mm; }
+  .dist { display:flex; align-items:center; gap:5mm; margin-top:10mm; padding-top:6mm; border-top:1px solid var(--line); }
+  .dist span { font-family:'Barlow Condensed'; text-transform:uppercase; letter-spacing:.3em; font-size:8pt; color:var(--gold); line-height:1.5; }
+  .dist img { height:5.5mm; }
+
+  /* ---------- Presentación ---------- */
+  .p2 .intro { display:grid; grid-template-columns:1fr 68mm; gap:9mm; }
+  .p2 p { font-size:9.6pt; line-height:1.6; color:#c9c6bf; margin:0 0 3mm; }
+  .p2 p b { color:var(--txt); font-weight:500; }
+  .badge { border:1px solid var(--line); border-left:2px solid var(--gold); background:var(--panel); padding:7mm 6mm; display:flex; flex-direction:column; gap:4mm; justify-content:center; }
+  .badge img { width:100%; }
+  .badge p { font-size:8.5pt !important; margin:0 !important; }
+  .lineas { margin-top:auto; display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:5mm; }
+  .lin { background:var(--panel); border:1px solid var(--line); display:flex; flex-direction:column; }
+  .lin .pic { height:56mm; background:var(--light); display:flex; align-items:flex-end; justify-content:center; gap:1.5mm; padding:4mm 2mm 0; }
+  .lin .pic { overflow:hidden; }
+  .lin .pic img { height:95%; max-width:48%; object-fit:contain; object-position:bottom; mix-blend-mode:multiply; }
+  .lin .t { padding:3mm 3.5mm 3.5mm; }
+  .lin .t .n { font-family:'Barlow Condensed'; font-weight:300; color:var(--gold); font-size:8.5pt; letter-spacing:.2em; }
+  .lin .t h4 { font-family:'Barlow Condensed'; font-weight:500; text-transform:uppercase; letter-spacing:.08em; font-size:11.5pt; margin:.5mm 0 1mm; }
+  .lin .t p { font-size:7.4pt; line-height:1.38; color:#a9a69f; margin:0; }
+
+  /* ---------- Página de línea ---------- */
+  .lp .hero { position:absolute; top:0; left:0; right:0; height:96mm; background-size:cover; background-position:center; filter:saturate(.85); }
+  .lp .hero::after { content:''; position:absolute; inset:0; background:linear-gradient(180deg, rgba(11,11,12,.55) 0%, rgba(11,11,12,0) 30%, rgba(11,11,12,.2) 60%, rgba(11,11,12,1) 100%); }
+  .lp .htop { position:absolute; top:12mm; left:14mm; right:14mm; display:flex; justify-content:space-between; align-items:center; }
+  .lp .htop img { height:8mm; }
+  .lp .htop img.g { height:3.6mm; opacity:.85; }
+  .lp .head { position:absolute; top:66mm; left:14mm; right:14mm; display:flex; justify-content:space-between; align-items:flex-end; }
+  .lp .head h2 { font-family:'Barlow Condensed'; text-transform:uppercase; letter-spacing:.04em; font-size:40pt; font-weight:500; margin:2mm 0 0; line-height:.9; }
+  .lp .head .tag { font-family:'Barlow Condensed'; text-transform:uppercase; letter-spacing:.25em; font-size:8.5pt; color:#cfccc5; text-align:right; line-height:1.6; }
+  .lp .body { position:absolute; top:104mm; left:14mm; right:14mm; bottom:16mm; display:flex; flex-direction:column; }
+  .lead { font-size:9.3pt; line-height:1.58; color:#c9c6bf; margin:0 0 5mm; }
+  .lead b { color:var(--txt); font-weight:500; }
+
+  .doors { background:var(--light); display:flex; justify-content:space-around; align-items:flex-end; padding:5mm 3mm 0; height:66mm; flex:none; position:relative; }
+  .doors::after { content:''; position:absolute; left:0; right:0; bottom:0; height:13mm; background:#d9d8d4; z-index:0; }
+  .door { display:flex; flex-direction:column; align-items:center; height:100%; position:relative; z-index:1; }
+  .door img { height:calc(100% - 9mm); mix-blend-mode:multiply; }
+  .door b { font-family:'Barlow Condensed'; font-weight:500; text-transform:uppercase; letter-spacing:.16em; font-size:7.4pt; color:#3a3936; margin-top:2mm; text-align:center; line-height:1.1; white-space:nowrap; }
+  .door b small { display:block; font-weight:400; letter-spacing:.08em; font-size:5.8pt; color:#77746d; }
+  .doors + .doors { margin-top:3mm; }
+
+  .feat { list-style:none; margin:0; padding:0; font-size:8.4pt; }
+  .feat li { padding:1.9mm 0; border-top:1px solid var(--line); display:flex; gap:3mm; color:var(--txt); line-height:1.35; }
+  .feat li::before { content:''; width:3mm; height:1px; background:var(--gold); margin-top:2mm; flex:none; }
+  .feat li span { color:#bdbab3; }
+  .feat.cols { columns:2; column-gap:7mm; }
+  .feat.cols li { break-inside:avoid; }
+
+  .ficha dl { margin:0; display:grid; grid-template-columns:22mm 1fr; font-size:7.8pt; line-height:1.42; }
+  .ficha dt { font-family:'Barlow Condensed'; text-transform:uppercase; letter-spacing:.2em; font-size:6.8pt; color:var(--gold); padding:1.6mm 0; border-top:1px solid var(--line); }
+  .ficha dd { margin:0; color:#bdbab3; padding:1.6mm 0; border-top:1px solid var(--line); }
+  .ficha dd b { color:var(--txt); font-weight:500; }
+  .ficha h4 { font-family:'Barlow Condensed'; font-weight:400; text-transform:uppercase; letter-spacing:.12em; font-size:10.5pt; margin:0 0 1.5mm; }
+
+  /* Tabla de disponibilidad */
+  .disp { width:100%; border-collapse:collapse; font-size:7.8pt; }
+  .disp th { font-family:'Barlow Condensed'; font-weight:500; text-transform:uppercase; letter-spacing:.1em; font-size:7.6pt; color:var(--gold); padding:0 1mm 1.8mm; border-bottom:1px solid var(--gold); text-align:center; white-space:nowrap; }
+  .disp th:first-child { text-align:left; color:var(--muted); font-weight:400; letter-spacing:.2em; font-size:6.6pt; }
+  .disp td { padding:1.35mm 1mm; border-bottom:1px solid var(--line); text-align:center; color:var(--txt); }
+  .disp td:first-child { text-align:left; font-family:'Barlow Condensed'; letter-spacing:.08em; color:#bdbab3; white-space:nowrap; }
+  .disp td.x::after { content:''; display:inline-block; width:1.6mm; height:1.6mm; border-radius:50%; background:var(--gold); }
+  .disp-nota { font-size:6.8pt; color:var(--muted); margin-top:2mm; }
+
+  .box { border:1px solid var(--line); border-left:2px solid var(--gold); background:var(--panel); padding:4.5mm 5mm; font-size:8pt; line-height:1.5; color:#bdbab3; }
+  .box b { color:var(--txt); font-weight:500; }
+  .pic-light { background:var(--light); display:flex; align-items:center; justify-content:center; }
+  .pic-light img { max-width:100%; max-height:100%; mix-blend-mode:multiply; }
+  .photo-card { position:relative; background-size:cover; background-position:center; }
+  .photo-card::after { content:''; position:absolute; inset:0; background:linear-gradient(180deg, rgba(11,11,12,0) 50%, rgba(11,11,12,.92) 100%); }
+  .photo-card .t { position:absolute; left:4mm; right:4mm; bottom:4mm; z-index:1; }
+  .photo-card h4 { font-family:'Barlow Condensed'; font-weight:500; text-transform:uppercase; font-size:15pt; letter-spacing:.04em; margin:1mm 0 .5mm; line-height:1; }
+  .photo-card p { font-size:7.6pt; color:#cfccc5; margin:0; line-height:1.4; }
+
+  .acc { display:grid; grid-template-columns:repeat(4,1fr); gap:3mm; }
+  .acc div { background:var(--light); height:20mm; display:flex; align-items:center; justify-content:center; padding:2mm; }
+  .acc img { max-width:100%; max-height:100%; }
+
+  /* Manos */
+  .manos { display:grid; grid-template-columns:repeat(4,1fr); gap:4mm; }
+  .mano { border:1px solid var(--line); background:var(--panel); padding:3mm; text-align:center; }
+  .mano svg { width:100%; height:auto; display:block; }
+  .mano b { display:block; font-family:'Barlow Condensed'; font-weight:500; text-transform:uppercase; letter-spacing:.14em; font-size:7.6pt; margin-top:2mm; }
+  .mano small { display:block; font-family:'Barlow Condensed'; text-transform:uppercase; letter-spacing:.14em; font-size:6.4pt; color:var(--muted); margin-top:.5mm; }
+
+  /* Contratapa */
+  .back .grid { position:absolute; inset:0; background:
+      linear-gradient(90deg, rgba(201,169,110,.06) 1px, transparent 1px) 0 0/21mm 21mm,
+      linear-gradient(rgba(201,169,110,.06) 1px, transparent 1px) 0 0/21mm 21mm; }
+  .back .glow { position:absolute; right:-30mm; top:0; width:190mm; height:150mm; background:radial-gradient(closest-side, rgba(201,169,110,.12), transparent); }
+  .back .row { position:absolute; top:24mm; left:16mm; right:16mm; display:flex; justify-content:center; align-items:flex-end; gap:5mm; height:66mm; }
+  .back .row img { height:100%; filter:drop-shadow(0 6mm 10mm rgba(0,0,0,.6)); }
+  .back .row img:nth-child(odd) { height:92%; }
+  .back .center { position:absolute; left:16mm; right:16mm; bottom:34mm; }
+  .back .center img.logo { height:16mm; }
+  .back h2 { font-family:'Barlow Condensed'; font-weight:400; text-transform:uppercase; font-size:24pt; line-height:1.05; letter-spacing:.04em; margin:8mm 0 7mm; max-width:140mm; }
+  .contacto { display:grid; grid-template-columns:1fr 30mm; gap:8mm; align-items:end; border-top:1px solid var(--line); padding-top:7mm; }
+  .contacto dl { margin:0; display:grid; grid-template-columns:24mm 1fr; row-gap:2.6mm; font-size:9.5pt; }
+  .contacto dt { font-family:'Barlow Condensed'; text-transform:uppercase; letter-spacing:.25em; font-size:7.5pt; color:var(--gold); padding-top:.6mm; }
+  .contacto dd { margin:0; }
+  .qr { background:#fff; padding:2mm; width:30mm; height:30mm; }
+  .qr img, .qr canvas { width:100% !important; height:100% !important; display:block; }
+  .qr-cap { font-family:'Barlow Condensed'; text-transform:uppercase; letter-spacing:.2em; font-size:6.5pt; color:var(--muted); text-align:center; margin-top:2mm; }
+  .legal { position:absolute; left:16mm; right:16mm; bottom:9mm; font-size:6.5pt; color:#5d5b56; line-height:1.4; display:flex; justify-content:space-between; align-items:center; gap:8mm; }
+  .legal img { height:3mm; opacity:.5; }
+
+  @media screen and (max-width: 860px) {
+    .page { zoom:calc((100vw - 32px) / 794px); }
+  }
+  @page { size:A4; margin:0; }
+  @media print {
+    html, body { background:var(--bg); }
+    body { padding:0; gap:0; display:block; }
+    .tools { display:none; }
+    .page { box-shadow:none; page-break-after:always; break-after:page; zoom:1; }
+    * { -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+  }
+  .disp.lg td { padding:1.9mm 1mm; font-size:8.4pt; }
+
+  .gd { background:var(--light); display:grid; gap:2mm 3mm; padding:5mm 4mm 3mm; }
+  .gd figure { margin:0; display:flex; flex-direction:column; align-items:center; justify-content:flex-end; min-width:0; }
+  .gd img { max-width:100%; mix-blend-mode:multiply; object-fit:contain; }
+  .gd figcaption { font-family:'Barlow Condensed'; font-weight:500; text-transform:uppercase; letter-spacing:.14em; font-size:7pt; color:#3a3936; margin-top:1.6mm; text-align:center; line-height:1.15; white-space:nowrap; }
+  .gd figcaption small { display:block; font-weight:400; letter-spacing:.08em; font-size:5.8pt; color:#77746d; }
+  .cls { display:flex; align-items:flex-end; justify-content:space-between; gap:6mm; margin:0 0 3mm; }
+  .cls h3 { font-family:'Barlow Condensed'; font-weight:500; text-transform:uppercase; letter-spacing:.06em; font-size:19pt; line-height:1; margin:1.5mm 0 0; }
+  .cls h3 em { font-style:normal; font-weight:300; color:var(--gold); }
+  .cls .med { font-family:'Barlow Condensed'; text-transform:uppercase; letter-spacing:.2em; font-size:7.5pt; color:var(--muted); text-align:right; white-space:nowrap; }
+  .cls .med b { display:block; color:var(--txt); font-weight:400; font-size:12pt; letter-spacing:.04em; }
+  .chips { display:flex; flex-wrap:wrap; gap:1.6mm; margin:0 0 4mm; }
+  .chips span { border:1px solid var(--line); background:var(--panel); font-size:7.4pt; color:#cfccc5; padding:1.2mm 2.4mm; }
+  .bloque + .bloque { margin-top:8mm; }
+  .cmp { width:100%; border-collapse:collapse; font-size:7.6pt; }
+  .cmp th { font-family:'Barlow Condensed'; font-weight:500; text-transform:uppercase; letter-spacing:.1em; font-size:7.4pt; color:var(--gold); text-align:left; padding:0 1.5mm 2mm; border-bottom:1px solid var(--gold); }
+  .cmp td { padding:2mm 1.5mm; border-bottom:1px solid var(--line); color:#bdbab3; vertical-align:top; line-height:1.35; }
+  .cmp td:first-child { font-family:'Barlow Condensed'; text-transform:uppercase; letter-spacing:.08em; color:var(--txt); font-size:8.6pt; white-space:nowrap; }
+  .cmp td:first-child small { display:block; color:var(--muted); font-size:6.4pt; letter-spacing:.14em; }
+  .tips { display:grid; grid-template-columns:1fr 1fr; gap:6mm 8mm; }
+  .tips h4 { font-family:'Barlow Condensed'; font-weight:500; text-transform:uppercase; letter-spacing:.1em; font-size:11pt; margin:0 0 2mm; display:flex; gap:3mm; align-items:baseline; }
+  .tips h4 span { color:var(--gold); font-weight:400; }
+  .tips p { font-size:8.6pt; line-height:1.55; color:#bdbab3; margin:0; }
+  .tips p b { color:var(--txt); font-weight:500; }
+
+  .gd.photo figure img { mix-blend-mode:normal; box-shadow:0 1.5mm 3mm rgba(0,0,0,.18); }
+  .feats { display:grid; grid-template-columns:repeat(3,1fr); gap:4mm; }
+  .feats > div { border:1px solid var(--line); background:var(--panel); padding:4mm; }
+  .feats h4 { font-family:'Barlow Condensed'; font-weight:500; text-transform:uppercase; letter-spacing:.08em; font-size:10.5pt; margin:0 0 1.5mm; line-height:1.1; }
+  .feats h4 span { color:var(--gold); font-weight:300; margin-right:2mm; }
+  .feats p { font-size:7.8pt; line-height:1.45; color:#bdbab3; margin:0; }
+  .cmp3 { width:100%; border-collapse:collapse; font-size:7.8pt; }
+  .cmp3 th { font-family:'Barlow Condensed'; font-weight:500; text-transform:uppercase; letter-spacing:.12em; font-size:9pt; color:var(--txt); text-align:left; padding:0 2mm 2mm; border-bottom:1px solid var(--gold); }
+  .cmp3 th.pre { color:var(--gold); }
+  .cmp3 th:first-child { color:var(--muted); font-size:6.6pt; letter-spacing:.2em; font-weight:400; }
+  .cmp3 td { padding:1.7mm 2mm; border-bottom:1px solid var(--line); color:#bdbab3; }
+  .cmp3 td:first-child { font-family:'Barlow Condensed'; text-transform:uppercase; letter-spacing:.12em; font-size:7pt; color:var(--muted); white-space:nowrap; }
+  .cmp3 td.pre { color:var(--txt); background:rgba(201,169,110,.06); }
+  .cmp3 tr.grp td { font-family:'Barlow Condensed'; color:var(--gold); letter-spacing:.3em; font-size:6.6pt; padding-top:3mm; border-bottom:none; background:none; }
+  .pair { display:flex; gap:2mm; align-items:flex-end; justify-content:center; height:100%; }
+  .lead2 { font-size:9.2pt; line-height:1.58; color:#c9c6bf; margin:0 0 4mm; }
+  .lead2 b { color:var(--txt); font-weight:500; }
+  .note { font-size:7.4pt; color:var(--muted); margin-top:2.5mm; line-height:1.45; }
+</style>
+</head>
+<body>
+
+<div class="tools">
+  <span>Puertas de entrada · 14 páginas A4</span>
+  <button onclick="window.print()">Guardar PDF</button>
+</div>
+
+<section class="page cover">
+  <div class="photo" style="background-image:url('img/Home-Pavir-Imagen-Limpia_1.jpg'); background-position:50% center"></div>
+  <div class="shade"></div>
+  <div class="top">
+    <img src="img/logo.png" alt="Aluwal Aberturas">
+    <div class="eyebrow">Catálogo 2026</div>
+  </div>
+  <div class="bottom">
+    <div class="rule"></div>
+    <h1>Puertas<br><em>de entrada</em></h1>
+    <div class="sub">Acero · 48 mm · antibarreta</div>
+    <div class="tags">
+      <span>Línea Clásica</span><span>Línea Luján</span><span>Línea Pavir</span><span>Residencial</span><span>Acero símil</span><span>Pivotantes</span>
+    </div>
+    <div class="dist">
+      <span>Fabricadas<br>por</span>
+      <img src="img/pavir-logo.png" alt="Pavir" style="height:8mm">
+    </div>
+  </div>
+</section>
+<section class="page">
+  <div class="pad">
+    <div class="p2"><div class="intro">
+      <div>
+        <div class="eyebrow">Puertas de entrada</div>
+        <h2 class="big">Tres líneas de acero<br>y las pivotantes</h2>
+        <p>Trabajamos las puertas de <b>Pavir</b>, fábrica de Luján con una planta de 14.500 m² dedicada a puertas de entrada.</p>
+        <p>Todas tienen <b>48 mm de espesor</b> y triple contacto antibarreta. Lo que cambia entre líneas es el acero, el marco, la cerradura y cuánto aguantan la intemperie. Las pivotantes son otro producto: marco y estructura de aluminio, para entradas grandes.</p>
+        <p><b>Te asesoramos con el modelo, la medida y la mano de apertura, y te la llevamos a la obra.</b></p>
+      </div>
+      <div class="badge" style="padding:0; overflow:hidden; border-left:2px solid var(--gold)">
+        <div style="height:100%; min-height:62mm; background:url('img/Home-Pavir-Imagen-Limpia_2.jpg') 40% center/cover"></div>
+      </div>
+    </div></div>
+
+    <div class="sec-tit" style="margin-top:8mm"><h3>¿Cuál elegir?</h3><div class="rule"></div></div>
+    <table class="cmp3">
+      <tr><th style="width:34mm"></th><th>Clásica</th><th>Luján</th><th class="pre">Pavir · premium</th></tr>
+      <tr><td>Para</td><td>Vivienda y obra tradicional</td><td>Vivienda familiar y proyectos</td><td class="pre">Arquitectura premium</td></tr>
+      <tr class="grp"><td colspan="4">Construcción</td></tr>
+      <tr><td>Acero</td><td>Laminado</td><td>Electrozincado</td><td class="pre">Electrozincado</td></tr>
+      <tr><td>Hoja</td><td>48 mm</td><td>48 mm</td><td class="pre">48 mm</td></tr>
+      <tr><td>Marco</td><td>Chapa N° 22</td><td>Chapa N° 20</td><td class="pre">Chapa N° 18, corte a 45°</td></tr>
+      <tr class="grp"><td colspan="4">Seguridad</td></tr>
+      <tr><td>Sistema</td><td>Triple contacto antibarreta</td><td>Triple contacto antibarreta</td><td class="pre">Triple contacto antibarreta</td></tr>
+      <tr><td>Cerradura</td><td>Doble paleta</td><td>Doble paleta</td><td class="pre">Multilock europerfil</td></tr>
+      <tr class="grp"><td colspan="4">Durabilidad</td></tr>
+      <tr><td>Herrajes</td><td>Acero estándar</td><td>Acero plegado</td><td class="pre">Acero inoxidable AISI 316</td></tr>
+      <tr><td>Burlete perimetral</td><td>—</td><td>—</td><td class="pre">Sí</td></tr>
+      <tr><td>Aislación</td><td>●</td><td>●●</td><td class="pre">●●●</td></tr>
+      <tr><td>Niebla salina</td><td>800 hs</td><td>1000 hs</td><td class="pre">1200 hs</td></tr>
+      <tr class="grp"><td colspan="4">Terminación</td></tr>
+      <tr><td>Pintura</td><td>Poliéster Sinteplast</td><td>Poliéster Sinteplast</td><td class="pre">Poliéster AkzoNobel</td></tr>
+      <tr><td>Colores</td><td>2</td><td>2</td><td class="pre">Más de 20</td></tr>
+    </table>
+    <p class="note">Niebla salina: horas que resiste la pintura en el ensayo de corrosión. Más horas, más años sin óxido.</p>
+  </div>
+  <div class="folio"><img src="img/logo.png" alt=""><span>Puertas de entrada · 02</span></div>
+</section>
+<section class="page">
+  <div class="pad">
+    <div class="eyebrow">Cómo están hechas</div>
+    <h2 class="big">Lo que tienen<br>todas las líneas</h2>
+    <div class="feats">
+      <div><h4><span>01</span>Triple contacto antibarreta</h4><p>La herramienta no llega al punto de cierre, así que la hoja no se puede forzar desde afuera. Pavir lo usa hace más de 15 años.</p></div>
+      <div><h4><span>02</span>48 mm de espesor</h4><p>Hoja de 2 pulgadas, bastante más gruesa que una puerta común. Se nota en la rigidez y en cómo cierra.</p></div>
+      <div><h4><span>03</span>Hojas intercambiables</h4><p>La hoja se puede cambiar más adelante sin tocar el marco ni la instalación.</p></div>
+      <div><h4><span>04</span>Lavado interior</h4><p>El interior de la hoja se lava antes de inyectar el poliuretano. Así no se oxida de adentro hacia afuera.</p></div>
+      <div><h4><span>05</span>Nanofosfatizado</h4><p>Tratamiento en tres etapas que limpia y prepara el acero para que la pintura agarre y resista la corrosión.</p></div>
+      <div><h4><span>06</span>Pintura al horno</h4><p>Poliéster en polvo aplicado con robots y curado a 220 °C, hasta 120 micrones de espesor. Apta intemperie.</p></div>
+      <div><h4><span>07</span>Bisagras embutidas</h4><p>Bisagras de doble apoyo, ocultas. Apertura suave y sin puntos débiles a la vista.</p></div>
+      <div><h4><span>08</span>Vidrios de fábrica</h4><p>Los modelos con vidrio salen con los vidrios colocados desde la planta.</p></div>
+      <div><h4><span>09</span>Doble embalaje</h4><p>Hoja y marco con doble envoltura termocontraíble y esquineros. Llegan a la obra sin golpes.</p></div>
+    </div>
+    <div style="display:grid; grid-template-columns:1.4fr 1fr; gap:5mm; margin-top:6mm; flex:1; min-height:0">
+      <div class="photo-card" style="background-image:url('img/Imagen-desde-Arriba-Pavir-Opc-1.jpg')"><div class="t"><div class="eyebrow">Luján, Buenos Aires</div><h4>Planta de 14.500 m²</h4><p>Más de 100 personas trabajando.</p></div></div>
+      <div style="display:grid; grid-template-rows:1fr 1fr; gap:5mm">
+        <div class="photo-card" style="background-image:url('img/DSC05175.jpg')"></div>
+        <div class="photo-card" style="background-image:url('img/DSC_0058.jpg')"></div>
+      </div>
+    </div>
+  </div>
+  <div class="folio"><img src="img/logo.png" alt=""><span>Puertas de entrada · 03</span></div>
+</section>
+<section class="page lp">
+  <div class="hero" style="background-image:url('img/pintura_horno_poliester.jpg'); background-position:center 40%"></div>
+  <div class="htop"><img src="img/logo.png" alt=""><img class="g" src="img/pavir-logo.png" alt="" style="height:5mm"></div>
+  <div class="head">
+    <div><div class="eyebrow">Línea 01</div><h2>Clásica</h2></div>
+    <div class="tag">Acero laminado<br>blanco o negro</div>
+  </div>
+  <div class="body">
+    <p class="lead">La línea de entrada a Pavir: <b>48 mm, triple contacto antibarreta, marco galvanizado</b> y la misma pintura al horno que las otras. 800 horas de niebla salina.</p>
+    <div class="gd" style="grid-template-columns:repeat(7, minmax(0,1fr))">
+<figure style="height:84mm"><img src="img/15monaco-blanca.jpg" alt="" style="max-height:calc(84mm - 8mm)"><figcaption>15 Mónaco<small>blanco</small></figcaption></figure>
+<figure style="height:84mm"><img src="img/15monaco-negra.jpg" alt="" style="max-height:calc(84mm - 8mm)"><figcaption>15 Mónaco<small>negro</small></figcaption></figure>
+<figure style="height:84mm"><img src="img/16curva-blanca.jpg" alt="" style="max-height:calc(84mm - 8mm)"><figcaption>16 Curva<small>blanco</small></figcaption></figure>
+<figure style="height:84mm"><img src="img/16curva-negra.jpg" alt="" style="max-height:calc(84mm - 8mm)"><figcaption>16 Curva<small>negro</small></figcaption></figure>
+<figure style="height:84mm"><img src="img/19florencia-ciega-blanca.jpg" alt="" style="max-height:calc(84mm - 8mm)"><figcaption>19 Florencia ciega<small>blanco</small></figcaption></figure>
+<figure style="height:84mm"><img src="img/19florencia-ciega-negra.jpg" alt="" style="max-height:calc(84mm - 8mm)"><figcaption>19 Florencia ciega<small>negro</small></figcaption></figure>
+<figure style="height:84mm"><img src="img/19florencia-1-2reja-blanca.jpg" alt="" style="max-height:calc(84mm - 8mm)"><figcaption>19 Florencia ½ reja<small>blanco</small></figcaption></figure>
+</div>
+    <div style="margin-top:5mm"><div class="chips"><span>Acero laminado</span><span>Marco chapa N° 22 galvanizado</span><span>Cerradura doble paleta</span><span>Bisagras embutidas</span><span>Pintura poliéster Sinteplast</span><span>Hojas intercambiables</span><span>Colores: blanco y negro</span></div></div>
+  </div>
+  <div class="folio"><img src="img/logo.png" alt=""><span>Línea Clásica · 04</span></div>
+</section>
+<section class="page lp">
+  <div class="hero" style="background-image:url('img/Blanco-Grafito-Linea-Pavir.jpg'); background-position:center 55%"></div>
+  <div class="htop"><img src="img/logo.png" alt=""><img class="g" src="img/pavir-logo.png" alt="" style="height:5mm"></div>
+  <div class="head">
+    <div><div class="eyebrow">Línea 02</div><h2>Luján</h2></div>
+    <div class="tag">Acero electrozincado<br>blanco o gris grafito</div>
+  </div>
+  <div class="body">
+    <p class="lead">Acero <b>electrozincado</b>: viene con una capa de zinc de fábrica, así que resiste mucho mejor la humedad. Marco chapa N° 20 y 1000 horas de niebla salina.</p>
+    <div class="gd" style="grid-template-columns:repeat(5, minmax(0,1fr)); gap:1.5mm 3mm">
+<figure style="height:50mm"><img src="img/22acero-blanca.jpg" alt="" style="max-height:calc(50mm - 8mm)"><figcaption>Lisa con acero<small>22 · blanco</small></figcaption></figure>
+<figure style="height:50mm"><img src="img/22acerogrisgrafit.jpg" alt="" style="max-height:calc(50mm - 8mm)"><figcaption>Lisa con acero<small>22 · grafito</small></figcaption></figure>
+<figure style="height:50mm"><img src="img/LISA-CON-ACERO-22-BA.jpg" alt="" style="max-height:calc(50mm - 8mm)"><figcaption>Lisa acero símil<small>22 · blanco</small></figcaption></figure>
+<figure style="height:50mm"><img src="img/LISA-CON-ACERO-22-Gg.jpg" alt="" style="max-height:calc(50mm - 8mm)"><figcaption>Lisa acero símil<small>22 · grafito</small></figcaption></figure>
+<figure style="height:50mm"><img src="img/24imperia-blanca.jpg" alt="" style="max-height:calc(50mm - 8mm)"><figcaption>24 Imperia<small>blanco</small></figcaption></figure>
+<figure style="height:50mm"><img src="img/24imperia-gg.jpg" alt="" style="max-height:calc(50mm - 8mm)"><figcaption>24 Imperia<small>grafito</small></figcaption></figure>
+<figure style="height:50mm"><img src="img/25verona-blanca.jpg" alt="" style="max-height:calc(50mm - 8mm)"><figcaption>25 Verona<small>blanco</small></figcaption></figure>
+<figure style="height:50mm"><img src="img/25verona-gg.jpg" alt="" style="max-height:calc(50mm - 8mm)"><figcaption>25 Verona<small>grafito</small></figcaption></figure>
+<figure style="height:50mm"><img src="img/71futura-blanca.jpg" alt="" style="max-height:calc(50mm - 8mm)"><figcaption>26 Futura<small>blanco</small></figcaption></figure>
+<figure style="height:50mm"><img src="img/71futura-gg.jpg" alt="" style="max-height:calc(50mm - 8mm)"><figcaption>26 Futura<small>grafito</small></figcaption></figure>
+<figure style="height:50mm"><img src="img/FlorenciaCiegaBA.jpg" alt="" style="max-height:calc(50mm - 8mm)"><figcaption>29 Florencia ciega<small>blanco</small></figcaption></figure>
+<figure style="height:50mm"><img src="img/FlorenciaCiegaGris.jpg" alt="" style="max-height:calc(50mm - 8mm)"><figcaption>29 Florencia ciega<small>grafito</small></figcaption></figure>
+<figure style="height:50mm"><img src="img/29florencia-1-2reja-blanca.jpg" alt="" style="max-height:calc(50mm - 8mm)"><figcaption>29 Florencia ½ reja<small>blanco</small></figcaption></figure>
+<figure style="height:50mm"><img src="img/24imperia-lateral-blanca.jpg" alt="" style="max-height:calc(50mm - 8mm)"><figcaption>24 Imperia lateral<small>blanco</small></figcaption></figure>
+<figure style="height:50mm"><img src="img/Imperia-con-Lateral-gg.jpg" alt="" style="max-height:calc(50mm - 8mm)"><figcaption>24 Imperia lateral<small>grafito</small></figcaption></figure>
+</div>
+  </div>
+  <div class="folio"><img src="img/logo.png" alt=""><span>Línea Luján · 05</span></div>
+</section>
+<section class="page">
+  <div class="pad">
+    <div class="cls"><div><div class="eyebrow">Línea 03 · Pavir</div><h3>Blanco antártida <em>y gris grafito</em></h3></div><div class="med">Línea<b>Premium</b></div></div>
+    <p class="lead2">La línea más completa: <b>marco chapa N° 18 con corte a 45°</b>, cerradura <b>multilock europerfil</b>, herrajes de acero inoxidable AISI 316, burlete perimetral y pintura AkzoNobel. 1200 horas de niebla salina.</p>
+    <div class="gd" style="grid-template-columns:repeat(6, minmax(0,1fr)); gap:2mm 2.5mm">
+<figure style="height:64mm"><img src="img/47lisa-ba-sm.jpg" alt="" style="max-height:calc(64mm - 8mm)"><figcaption>47 Lisa<small>sin manijón</small></figcaption></figure>
+<figure style="height:64mm"><img src="img/Lisa-47080-BlancoAntartida.jpg" alt="" style="max-height:calc(64mm - 8mm)"><figcaption>47 Lisa<small>con manijón</small></figcaption></figure>
+<figure style="height:64mm"><img src="img/Lisa-Barral-BA.jpg" alt="" style="max-height:calc(64mm - 8mm)"><figcaption>49 Lisa<small>barral · blanco</small></figcaption></figure>
+<figure style="height:64mm"><img src="img/Lisa-Barral-GG.jpg" alt="" style="max-height:calc(64mm - 8mm)"><figcaption>49 Lisa<small>barral · grafito</small></figcaption></figure>
+<figure style="height:64mm"><img src="img/Verona-50-BA.jpg" alt="" style="max-height:calc(64mm - 8mm)"><figcaption>50 Verona<small>blanco</small></figcaption></figure>
+<figure style="height:64mm"><img src="img/Verona-50-GG.jpg" alt="" style="max-height:calc(64mm - 8mm)"><figcaption>50 Verona<small>grafito</small></figcaption></figure>
+<figure style="height:64mm"><img src="img/56imperia-ba.jpg" alt="" style="max-height:calc(64mm - 8mm)"><figcaption>56 Imperia<small>blanco</small></figcaption></figure>
+<figure style="height:64mm"><img src="img/56imperia-gg.jpg" alt="" style="max-height:calc(64mm - 8mm)"><figcaption>56 Imperia<small>grafito</small></figcaption></figure>
+<figure style="height:64mm"><img src="img/69florencia1-2reja-ba.jpg" alt="" style="max-height:calc(64mm - 8mm)"><figcaption>69 Florencia ½ reja<small>blanco · con vidrio</small></figcaption></figure>
+<figure style="height:64mm"><img src="img/69florencia1-2reja-gg.jpg" alt="" style="max-height:calc(64mm - 8mm)"><figcaption>69 Florencia ½ reja<small>grafito · con vidrio</small></figcaption></figure>
+<figure style="height:64mm"><img src="img/71futura-ba.jpg" alt="" style="max-height:calc(64mm - 8mm)"><figcaption>71 Futura<small>blanco</small></figcaption></figure>
+<figure style="height:64mm"><img src="img/71futura-gg-1.jpg" alt="" style="max-height:calc(64mm - 8mm)"><figcaption>71 Futura<small>grafito</small></figcaption></figure>
+<figure style="height:64mm"><img src="img/76liguria.jpg" alt="" style="max-height:calc(64mm - 8mm)"><figcaption>76 Liguria<small>grafito</small></figcaption></figure>
+<figure style="height:64mm"><img src="img/78genova-ba.jpg" alt="" style="max-height:calc(64mm - 8mm)"><figcaption>78 Génova<small>blanco</small></figcaption></figure>
+<figure style="height:64mm"><img src="img/78genova-gg.jpg" alt="" style="max-height:calc(64mm - 8mm)"><figcaption>78 Génova<small>grafito</small></figcaption></figure>
+<figure style="height:64mm"><img src="img/79trentina.jpg" alt="" style="max-height:calc(64mm - 8mm)"><figcaption>79 Trentina<small>blanco</small></figcaption></figure>
+</div>
+    <div class="box" style="margin-top:5mm"><span class="eyebrow">Opcional · cierre multipunto</span><br>Las <b>56 Imperia</b> y <b>78 Génova</b> pueden llevar cierre multipunto: <b>9 puntos</b> (3 arriba, 3 al centro y 3 abajo) que traban todos juntos contra el marco al girar la llave.</div>
+  </div>
+  <div class="folio"><img src="img/logo.png" alt=""><span>Línea Pavir · 06</span></div>
+</section>
+<section class="page">
+  <div class="pad">
+    <div class="cls"><div><div class="eyebrow">Línea Pavir</div><h3>Residencial <em>· hoja ancha</em></h3></div></div>
+    <p class="lead2">Puertas de <b>hoja ancha</b> para entradas principales: ciegas, con postigo fijo de vidrio o con postigo de abrir. En blanco, grafito, caoba y roble.</p>
+    <div class="gd" style="grid-template-columns:repeat(5, minmax(0,1fr)); gap:2mm 3mm">
+<figure style="height:70mm"><img src="img/lisa-ciega-ba.jpg" alt="" style="max-height:calc(70mm - 8mm)"><figcaption>49 Lisa ciega<small>blanco</small></figcaption></figure>
+<figure style="height:70mm"><img src="img/lisa-ciega-gg.jpg" alt="" style="max-height:calc(70mm - 8mm)"><figcaption>49 Lisa ciega<small>grafito</small></figcaption></figure>
+<figure style="height:70mm"><img src="img/lisa-ciega-caoba.jpg" alt="" style="max-height:calc(70mm - 8mm)"><figcaption>49 Lisa ciega<small>caoba</small></figcaption></figure>
+<figure style="height:70mm"><img src="img/lisa-ciega-roble.jpg" alt="" style="max-height:calc(70mm - 8mm)"><figcaption>49 Lisa ciega<small>roble *</small></figcaption></figure>
+<figure style="height:70mm"><img src="img/lisa-postigo-fijo-ba.jpg" alt="" style="max-height:calc(70mm - 8mm)"><figcaption>49 Lisa p. fijo<small>blanco</small></figcaption></figure>
+<figure style="height:70mm"><img src="img/lisa-postigo-fijo-gg.jpg" alt="" style="max-height:calc(70mm - 8mm)"><figcaption>49 Lisa p. fijo<small>grafito</small></figcaption></figure>
+<figure style="height:70mm"><img src="img/lisa-postigo-fijo-caoba.jpg" alt="" style="max-height:calc(70mm - 8mm)"><figcaption>49 Lisa p. fijo<small>caoba</small></figcaption></figure>
+<figure style="height:70mm"><img src="img/lisa-postigo-fijo-roble.jpg" alt="" style="max-height:calc(70mm - 8mm)"><figcaption>49 Lisa p. fijo<small>roble *</small></figcaption></figure>
+<figure style="height:70mm"><img src="img/verona-ciega-ba.jpg" alt="" style="max-height:calc(70mm - 8mm)"><figcaption>50 Verona ciega<small>blanco</small></figcaption></figure>
+<figure style="height:70mm"><img src="img/verona-ciega-gg.jpg" alt="" style="max-height:calc(70mm - 8mm)"><figcaption>50 Verona ciega<small>grafito</small></figcaption></figure>
+<figure style="height:70mm"><img src="img/verona-ciega-roble.jpg" alt="" style="max-height:calc(70mm - 8mm)"><figcaption>50 Verona ciega<small>roble</small></figcaption></figure>
+<figure style="height:70mm"><img src="img/verona-postigo-fijo-roble.jpg" alt="" style="max-height:calc(70mm - 8mm)"><figcaption>50 Verona p. fijo<small>roble</small></figcaption></figure>
+<figure style="height:70mm"><img src="img/verona-postigo-abrir-ba.jpg" alt="" style="max-height:calc(70mm - 8mm)"><figcaption>50 Verona p. abrir<small>blanco</small></figcaption></figure>
+<figure style="height:70mm"><img src="img/verona-postigo-abrir-gg.jpg" alt="" style="max-height:calc(70mm - 8mm)"><figcaption>50 Verona p. abrir<small>grafito</small></figcaption></figure>
+</div>
+    <p class="note">* Únicamente en 2,20 m de altura. P. fijo: con postigo fijo de vidrio. P. abrir: con postigo de abrir.</p>
+  </div>
+  <div class="folio"><img src="img/logo.png" alt=""><span>Línea Pavir · Residencial · 07</span></div>
+</section>
+<section class="page">
+  <div class="pad">
+    <div class="cls"><div><div class="eyebrow">Línea Pavir</div><h3>Residencial <em>· continuación</em></h3></div></div>
+    <div class="gd" style="grid-template-columns:repeat(5, minmax(0,1fr)); gap:2mm 3mm">
+<figure style="height:74mm"><img src="img/imperia-ciega-roble.jpg" alt="" style="max-height:calc(74mm - 8mm)"><figcaption>56 Imperia ciega<small>roble</small></figcaption></figure>
+<figure style="height:74mm"><img src="img/56ImperiaPFBAResidencial.jpg" alt="" style="max-height:calc(74mm - 8mm)"><figcaption>56 Imperia p. fijo<small>blanco</small></figcaption></figure>
+<figure style="height:74mm"><img src="img/56ImperiaGGResidencial.jpg" alt="" style="max-height:calc(74mm - 8mm)"><figcaption>56 Imperia p. fijo<small>grafito</small></figcaption></figure>
+<figure style="height:74mm"><img src="img/imperia-postigo-fijo-roble.jpg" alt="" style="max-height:calc(74mm - 8mm)"><figcaption>56 Imperia p. fijo<small>roble</small></figcaption></figure>
+<figure style="height:74mm"><img src="img/56imperia-postigo-abrir-ba.jpg" alt="" style="max-height:calc(74mm - 8mm)"><figcaption>56 Imperia p. abrir<small>blanco</small></figcaption></figure>
+<figure style="height:74mm"><img src="img/56imperia-postigo-abrir-gg.jpg" alt="" style="max-height:calc(74mm - 8mm)"><figcaption>56 Imperia p. abrir<small>grafito</small></figcaption></figure>
+<figure style="height:74mm"><img src="img/71futura-ciega-ba.jpg" alt="" style="max-height:calc(74mm - 8mm)"><figcaption>71 Futura ciega<small>blanco</small></figcaption></figure>
+<figure style="height:74mm"><img src="img/71futura-ciega-gg.jpg" alt="" style="max-height:calc(74mm - 8mm)"><figcaption>71 Futura ciega<small>grafito</small></figcaption></figure>
+<figure style="height:74mm"><img src="img/futura-ciega-caoba.jpg" alt="" style="max-height:calc(74mm - 8mm)"><figcaption>71 Futura ciega<small>caoba</small></figcaption></figure>
+<figure style="height:74mm"><img src="img/futura-ciega-roble.jpg" alt="" style="max-height:calc(74mm - 8mm)"><figcaption>71 Futura ciega<small>roble *</small></figcaption></figure>
+<figure style="height:74mm"><img src="img/71futura-postigo-fijo-ba.jpg" alt="" style="max-height:calc(74mm - 8mm)"><figcaption>71 Futura p. fijo<small>blanco</small></figcaption></figure>
+<figure style="height:74mm"><img src="img/71futura-postigo-fijo-gg.jpg" alt="" style="max-height:calc(74mm - 8mm)"><figcaption>71 Futura p. fijo<small>grafito</small></figcaption></figure>
+<figure style="height:74mm"><img src="img/futura-postigo-fijo-caoba.jpg" alt="" style="max-height:calc(74mm - 8mm)"><figcaption>71 Futura p. fijo<small>caoba</small></figcaption></figure>
+<figure style="height:74mm"><img src="img/futura-postigo-fijo-roble.jpg" alt="" style="max-height:calc(74mm - 8mm)"><figcaption>71 Futura p. fijo<small>roble *</small></figcaption></figure>
+</div>
+    <p class="note">* Únicamente en 2,20 m de altura. P. fijo: con postigo fijo de vidrio. P. abrir: con postigo de abrir.</p>
+  </div>
+  <div class="folio"><img src="img/logo.png" alt=""><span>Línea Pavir · Residencial · 08</span></div>
+</section>
+<section class="page lp">
+  <div class="hero" style="background-image:url('img/Acero-Simil-Linea-PAVIR.jpg'); background-position:center 50%"></div>
+  <div class="htop"><img src="img/logo.png" alt=""><img class="g" src="img/pavir-logo.png" alt="" style="height:5mm"></div>
+  <div class="head">
+    <div><div class="eyebrow">Línea Pavir</div><h2>Acero símil</h2></div>
+    <div class="tag">Aspecto madera<br>resistencia de acero</div>
+  </div>
+  <div class="body">
+    <p class="lead">El aspecto cálido de la madera con todo lo del acero: <b>no se hincha, no se raja y no hay que barnizarla</b>. Misma construcción que la Línea Pavir.</p>
+    <div class="gd" style="grid-template-columns:repeat(7, minmax(0,1fr)); gap:1.5mm 2mm">
+<figure style="height:70mm"><img src="img/futura-fresno.jpg" alt="" style="max-height:calc(70mm - 8mm)"><figcaption>71 Futura<small>fresno</small></figcaption></figure>
+<figure style="height:70mm"><img src="img/futura-caoba.jpg" alt="" style="max-height:calc(70mm - 8mm)"><figcaption>71 Futura<small>caoba</small></figcaption></figure>
+<figure style="height:70mm"><img src="img/futura-muzgo.jpg" alt="" style="max-height:calc(70mm - 8mm)"><figcaption>71 Futura<small>muzgo</small></figcaption></figure>
+<figure style="height:70mm"><img src="img/futura-roble.jpg" alt="" style="max-height:calc(70mm - 8mm)"><figcaption>71 Futura<small>roble *</small></figcaption></figure>
+<figure style="height:70mm"><img src="img/imperia-roble.jpg" alt="" style="max-height:calc(70mm - 8mm)"><figcaption>56 Imperia<small>roble</small></figcaption></figure>
+<figure style="height:70mm"><img src="img/imperia-fresno.jpg" alt="" style="max-height:calc(70mm - 8mm)"><figcaption>56 Imperia<small>fresno</small></figcaption></figure>
+<figure style="height:70mm"><img src="img/verona-fresno.jpg" alt="" style="max-height:calc(70mm - 8mm)"><figcaption>50 Verona<small>fresno</small></figcaption></figure>
+</div>
+    <div style="height:3mm"></div>
+    <div class="gd" style="grid-template-columns:repeat(7, minmax(0,1fr)); gap:1.5mm 2mm">
+<figure style="height:70mm"><img src="img/lisa-roble.jpg" alt="" style="max-height:calc(70mm - 8mm)"><figcaption>49 Lisa<small>roble *</small></figcaption></figure>
+<figure style="height:70mm"><img src="img/lisa-caoba.jpg" alt="" style="max-height:calc(70mm - 8mm)"><figcaption>49 Lisa<small>caoba</small></figcaption></figure>
+<figure style="height:70mm"><img src="img/lisa-fresno.jpg" alt="" style="max-height:calc(70mm - 8mm)"><figcaption>49 Lisa<small>fresno</small></figcaption></figure>
+<figure style="height:70mm"><img src="img/lisa-entablonada.jpg" alt="" style="max-height:calc(70mm - 8mm)"><figcaption>49 Lisa<small>entablonada</small></figcaption></figure>
+<figure style="height:70mm"><img src="img/lisa-texturada.jpg" alt="" style="max-height:calc(70mm - 8mm)"><figcaption>49 Lisa<small>texturada</small></figcaption></figure>
+<figure style="height:70mm"><img src="img/lisa-texturada-decorativa.jpg" alt="" style="max-height:calc(70mm - 8mm)"><figcaption>49 Lisa<small>texturada decorativa</small></figcaption></figure>
+<figure style="height:70mm"><img src="img/verona-roble.jpg" alt="" style="max-height:calc(70mm - 8mm)"><figcaption>50 Verona<small>roble</small></figcaption></figure>
+</div>
+    <p class="note">* Únicamente en 2,20 m de altura.</p>
+  </div>
+  <div class="folio"><img src="img/logo.png" alt=""><span>Línea Pavir · Acero símil · 09</span></div>
+</section>
+<section class="page lp">
+  <div class="hero" style="background-image:url('img/Portada-Web-Pivotantes.jpg'); background-position:center 55%"></div>
+  <div class="htop"><img src="img/logo.png" alt=""><img class="g" src="img/pavir-logo.png" alt="" style="height:5mm"></div>
+  <div class="head">
+    <div><div class="eyebrow">Línea 04</div><h2>Pivotantes</h2></div>
+    <div class="tag">Marco y estructura<br>de aluminio</div>
+  </div>
+  <div class="body">
+    <p class="lead">No es chapa ni madera: <b>marco y estructura de aluminio</b>, así que no se oxidan. Puertas de gran formato que giran sobre un eje, para entradas que son parte del diseño de la casa. <b>Vienen con contramarco incluido.</b></p>
+    <div class="feats">
+      <div><h4><span>01</span>No se oxida</h4><p>Estructura de aluminio. Resiste más de 1500 horas de niebla salina.</p></div>
+      <div><h4><span>02</span>Doble burlete</h4><p>Doble burlete perimetral en todo el contorno de la hoja.</p></div>
+      <div><h4><span>03</span>Fin Seal en zócalo</h4><p>Doble felpa en el encuentro con el piso: frena polvo y tierra sin que se vea.</p></div>
+      <div><h4><span>04</span>Construcción en seco</h4><p>Apta para steel frame y Durlock.</p></div>
+      <div><h4><span>05</span>Con paños fijos</h4><p>Se puede acoplar a paños fijos de PVC o aluminio de cualquier medida.</p></div>
+      <div><h4><span>06</span>Contramarco incluido</h4><p>Cerradura europerfil de serie. Opcional cerradura inteligente.</p></div>
+    </div>
+    <div class="sec-tit" style="margin-top:6mm"><h3>Medidas finales</h3><div class="rule"></div></div>
+    <table class="disp">
+      <tr><th>mm</th><th>1107 × 2062</th><th>1307 × 2262</th><th>1307 × 2462</th></tr>
+      <tr><td>Lisa y postigo lateral</td><td class="x"></td><td class="x"></td><td></td></tr>
+      <tr><td>Wall panel y nueva colección</td><td></td><td class="x"></td><td class="x"></td></tr>
+    </table>
+    <div class="photo-card" style="margin-top:auto; height:46mm; background-image:url('img/IMG_4978.jpg'); background-position:center 40%"></div>
+  </div>
+  <div class="folio"><img src="img/logo.png" alt=""><span>Pivotantes · 10</span></div>
+</section>
+<section class="page">
+  <div class="pad">
+    <div class="cls"><div><div class="eyebrow">Pivotantes</div><h3>Lisa <em>ciega</em></h3></div><div class="med">Medida<b>1107 × 2062 · 1307 × 2262 mm</b></div></div>
+    <div class="chips"><span>Barral curvo de acero inoxidable</span><span>Hoja y perfilería del mismo tono</span><span>Contramarco incluido</span><span>Cerradura europerfil</span><span>Opcional cerradura inteligente</span></div>
+    <div class="gd photo" style="grid-template-columns:repeat(4, minmax(0,1fr)); gap:2mm 3mm">
+<figure style="height:49mm"><img src="img/lisa_blanca_ciega.jpg" alt="" style="max-height:calc(49mm - 8mm)"><figcaption>Blanca</figcaption></figure>
+<figure style="height:49mm"><img src="img/lisa_gg_ciega.jpg" alt="" style="max-height:calc(49mm - 8mm)"><figcaption>Grafito</figcaption></figure>
+<figure style="height:49mm"><img src="img/lisa_roble_ciega.jpg" alt="" style="max-height:calc(49mm - 8mm)"><figcaption>Roble</figcaption></figure>
+<figure style="height:49mm"><img src="img/lisa_fresno_ciega.jpg" alt="" style="max-height:calc(49mm - 8mm)"><figcaption>Fresno</figcaption></figure>
+<figure style="height:49mm"><img src="img/lisa_caoba_ciega.jpg" alt="" style="max-height:calc(49mm - 8mm)"><figcaption>Caoba</figcaption></figure>
+<figure style="height:49mm"><img src="img/lisa_fresno_negra_ciega.jpg" alt="" style="max-height:calc(49mm - 8mm)"><figcaption>Roble / negro</figcaption></figure>
+<figure style="height:49mm"><img src="img/lisa_fresno_champagne_ciega.jpg" alt="" style="max-height:calc(49mm - 8mm)"><figcaption>Fresno / champagne</figcaption></figure>
+<figure style="height:49mm"><img src="img/lisa_caoba_negra_ciega.jpg" alt="" style="max-height:calc(49mm - 8mm)"><figcaption>Caoba / negro</figcaption></figure>
+</div>
+    <div style="height:5mm"></div>
+    <div class="cls"><div><div class="eyebrow">Pivotantes</div><h3>Lisa <em>con postigo lateral</em></h3></div><div class="med">Medida<b>1107 × 2062 · 1307 × 2262 mm</b></div></div>
+    <div class="gd photo" style="grid-template-columns:repeat(4, minmax(0,1fr)); gap:2mm 3mm">
+<figure style="height:49mm"><img src="img/pivotante-blanco-pf.jpg" alt="" style="max-height:calc(49mm - 8mm)"><figcaption>Blanca</figcaption></figure>
+<figure style="height:49mm"><img src="img/lisa_gris_grafito_postigo_fijo.jpg" alt="" style="max-height:calc(49mm - 8mm)"><figcaption>Grafito</figcaption></figure>
+<figure style="height:49mm"><img src="img/lisa_roble_postigo_fijo.jpg" alt="" style="max-height:calc(49mm - 8mm)"><figcaption>Roble</figcaption></figure>
+<figure style="height:49mm"><img src="img/lisa_fresno_postigo_fijo.jpg" alt="" style="max-height:calc(49mm - 8mm)"><figcaption>Fresno</figcaption></figure>
+<figure style="height:49mm"><img src="img/lisa_caoba_postigo_fijo.jpg" alt="" style="max-height:calc(49mm - 8mm)"><figcaption>Caoba</figcaption></figure>
+<figure style="height:49mm"><img src="img/lisa_roble_negro_postigo_fijo.jpg" alt="" style="max-height:calc(49mm - 8mm)"><figcaption>Roble / negro</figcaption></figure>
+<figure style="height:49mm"><img src="img/lisa_fresno_champagne_postigo_fijo.jpg" alt="" style="max-height:calc(49mm - 8mm)"><figcaption>Fresno / champagne</figcaption></figure>
+<figure style="height:49mm"><img src="img/lisa_caoba_negro_postigo_fijo.jpg" alt="" style="max-height:calc(49mm - 8mm)"><figcaption>Caoba / negro</figcaption></figure>
+</div>
+  </div>
+  <div class="folio"><img src="img/logo.png" alt=""><span>Pivotantes · 11</span></div>
+</section>
+<section class="page">
+  <div class="pad">
+    <div class="cls"><div><div class="eyebrow">Pivotantes</div><h3>Wall <em>panel</em></h3></div><div class="med">Medida<b>1307 × 2262 · 1307 × 2462 mm</b></div></div>
+    <div class="gd photo" style="grid-template-columns:repeat(4, minmax(0,1fr))">
+<figure style="height:60mm"><img src="img/wall_panel_roble.jpg" alt="" style="max-height:calc(60mm - 8mm)"><figcaption>Roble<small>perfil roble</small></figcaption></figure>
+<figure style="height:60mm"><img src="img/wall_panel_kitami.jpg" alt="" style="max-height:calc(60mm - 8mm)"><figcaption>Kitami<small>perfil grafito</small></figcaption></figure>
+<figure style="height:60mm"><img src="img/wall_panel_caoba.jpg" alt="" style="max-height:calc(60mm - 8mm)"><figcaption>Caoba<small>perfil caoba</small></figcaption></figure>
+<figure style="height:60mm"><img src="img/wall_panel_kitami_caoba.jpg" alt="" style="max-height:calc(60mm - 8mm)"><figcaption>Kitami / caoba<small>perfil grafito</small></figcaption></figure>
+</div>
+    <p class="note">Barral de acero plegado en el color del perfil. Cerradura europerfil, opcional cerradura inteligente.</p>
+    <div style="height:3mm"></div>
+    <div class="cls"><div><div class="eyebrow">Pivotantes</div><h3>Nueva <em>colección</em></h3></div><div class="med">Medida<b>1307 × 2262 · 1307 × 2462 mm</b></div></div>
+    <div class="gd photo" style="grid-template-columns:repeat(4, minmax(0,1fr))">
+<figure style="height:60mm"><img src="img/lisa_alamo.jpg" alt="" style="max-height:calc(60mm - 8mm)"><figcaption>Álamo<small>perfil fresno</small></figcaption></figure>
+<figure style="height:60mm"><img src="img/lias_moka.jpg" alt="" style="max-height:calc(60mm - 8mm)"><figcaption>Moka<small>perfil grafito</small></figcaption></figure>
+<figure style="height:60mm"><img src="img/lisa_moka_vidrio_templado.jpg" alt="" style="max-height:calc(60mm - 8mm)"><figcaption>Moka + vidrio<small>templado · perfil negro</small></figcaption></figure>
+<figure style="height:60mm"><img src="img/lisa_vidrio_templado_carrara.jpg" alt="" style="max-height:calc(60mm - 8mm)"><figcaption>Ónix vidrio<small>templado · perfil negro</small></figcaption></figure>
+</div>
+    <div style="height:3mm"></div>
+    <div class="cls"><div><div class="eyebrow">Pivotantes</div><h3>Texturadas</h3></div></div>
+    <div class="gd photo" style="grid-template-columns:repeat(4, minmax(0,1fr))">
+<figure style="height:60mm"><img src="img/texturada.jpg" alt="" style="max-height:calc(60mm - 8mm)"><figcaption>Texturada</figcaption></figure>
+<figure style="height:60mm"><img src="img/texturada-con-apliques-decorativos.jpg" alt="" style="max-height:calc(60mm - 8mm)"><figcaption>Texturada<small>con apliques</small></figcaption></figure>
+<figure style="height:60mm"><img src="img/gris-alecrim-apliques.jpg" alt="" style="max-height:calc(60mm - 8mm)"><figcaption>Gris alecrim<small>con apliques</small></figcaption></figure>
+<figure style="height:60mm"><img src="img/champagne-travertino-apliques.jpg" alt="" style="max-height:calc(60mm - 8mm)"><figcaption>Champagne travertino<small>con apliques</small></figcaption></figure>
+</div>
+  </div>
+  <div class="folio"><img src="img/logo.png" alt=""><span>Pivotantes · 12</span></div>
+</section>
+<section class="page">
+  <div class="pad">
+    <div class="eyebrow">Opcional para pivotantes</div>
+    <h2 class="big">Cerraduras inteligentes</h2>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:7mm">
+      <div>
+        <div class="pic-light" style="height:110mm; background:#e9e8e4"><img src="img/cerradura-inteligente-basica-920-1160.jpg" alt=""></div>
+        <div class="sec-tit" style="margin-top:5mm"><h3>Básica</h3><div class="rule"></div></div>
+        <ul class="feat">
+          <li>Abre con código, tarjeta o huella</li>
+          <li>Wi-Fi y control desde la app</li>
+          <li>Llave de respaldo</li>
+          <li>Diseño minimalista, fácil de usar</li>
+        </ul>
+      </div>
+      <div>
+        <div class="pic-light" style="height:110mm; background:#e9e8e4"><img src="img/cerradura-inteligente-full-920-1160.jpg" alt=""></div>
+        <div class="sec-tit" style="margin-top:5mm"><h3>Full</h3><div class="rule"></div></div>
+        <ul class="feat">
+          <li>Reconocimiento facial 3D, huella, PIN, tarjeta y llave</li>
+          <li>Cámara HD y pantalla color de 3,5"</li>
+          <li>Wi-Fi: abrís y atendés el timbre desde el celular</li>
+          <li>Cierre automático y alertas si intentan forzarla</li>
+          <li>Entrada USB-C de emergencia, batería de larga duración</li>
+        </ul>
+      </div>
+    </div>
+    <div class="photo-card" style="margin-top:auto; height:52mm; background-image:url('img/Home-Pavir-Imagen-Limpia_2.jpg'); background-position:center 60%"></div>
+  </div>
+  <div class="folio"><img src="img/logo.png" alt=""><span>Pivotantes · 13</span></div>
+</section>
+
+<section class="page back">
+  <div class="grid"></div>
+  <div class="glow"></div>
+  <div class="row">
+    <img src="img/Verona-50-GG.jpg" alt="">
+    <img src="img/futura-roble.jpg" alt="">
+    <img src="img/78genova-gg.jpg" alt="">
+    <img src="img/lisa-caoba.jpg" alt="">
+    <img src="img/Lisa-Barral-BA.jpg" alt="">
+  </div>
+  <div class="center">
+    <img class="logo" src="img/logo.png" alt="Aluwal Aberturas">
+    <h2>Pedí tu presupuesto<br>sin cargo</h2>
+    <div class="contacto">
+      <dl>
+        <dt>WhatsApp</dt><dd>11 2394-8049</dd>
+        <dt>Email</dt><dd>aluwalaberturas@gmail.com</dd>
+        <dt>Fábrica</dt><dd>Estanislao López 561, Pilar Centro</dd>
+        <dt>Web</dt><dd>aluwalaberturas.com</dd>
+        <dt>Instagram</dt><dd>@aluwal.arg</dd>
+      </dl>
+      <div>
+        <div class="qr" id="qr"></div>
+        <div class="qr-cap">Escaneá y escribinos</div>
+      </div>
+    </div>
+  </div>
+  <div class="legal">
+    <span>Aluwal Aberturas · Puertas Pavir. Especificaciones según fábrica; pueden cambiar sin previo aviso. Las imágenes son ilustrativas y los colores pueden variar respecto del producto real.</span>
+    <img src="img/pavir-logo.png" alt="Pavir" style="height:4mm">
+  </div>
+</section>
+
+<script>
+  new QRCode(document.getElementById('qr'), { text:'https://wa.me/5491123948049', width:256, height:256, colorDark:'#0b0b0c', colorLight:'#ffffff', correctLevel:QRCode.CorrectLevel.M });
+</script>
+</body>
+</html>
