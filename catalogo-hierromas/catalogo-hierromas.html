@@ -1,0 +1,629 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Puertas de Exterior · Aluwal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500;600&family=Barlow+Condensed:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+  :root { --gold:#c9a96e; --bg:#0b0b0c; --panel:#141416; --line:#2a2a2e; --txt:#e8e6e1; --muted:#8a8780; --light:#e9e8e4; }
+  * { box-sizing:border-box; }
+  html, body { margin:0; background:#050505; color:var(--txt); font-family:Barlow, sans-serif; }
+  body { padding:24px 16px 60px; display:flex; flex-direction:column; align-items:center; gap:24px; }
+
+  .tools { display:flex; gap:10px; align-items:center; }
+  .tools span { font-family:'Barlow Condensed'; letter-spacing:.25em; text-transform:uppercase; font-size:13px; color:var(--muted); }
+  .tools button { font-family:'Barlow Condensed'; text-transform:uppercase; letter-spacing:.15em; font-size:13px; background:var(--gold); color:#111; border:1px solid var(--gold); padding:9px 18px; cursor:pointer; }
+
+  .page { width:210mm; height:297mm; position:relative; overflow:hidden; background:var(--bg); box-shadow:0 10px 40px rgba(0,0,0,.6); }
+  .pad { position:absolute; inset:14mm 14mm 18mm; display:flex; flex-direction:column; }
+  .eyebrow { font-family:'Barlow Condensed'; text-transform:uppercase; letter-spacing:.35em; font-size:8.5pt; color:var(--gold); }
+  .rule { width:22mm; height:1px; background:var(--gold); }
+  .folio { position:absolute; left:14mm; right:14mm; bottom:8mm; display:flex; justify-content:space-between; align-items:center; font-family:'Barlow Condensed'; text-transform:uppercase; letter-spacing:.3em; font-size:7.5pt; color:var(--muted); }
+  .folio img { height:4.6mm; opacity:.85; }
+  .sec-tit { display:flex; align-items:baseline; gap:4mm; margin:0 0 3.5mm; }
+  .sec-tit h3 { font-family:'Barlow Condensed'; font-weight:400; text-transform:uppercase; letter-spacing:.18em; font-size:11.5pt; margin:0; white-space:nowrap; }
+  .sec-tit .rule { flex:1; background:var(--line); }
+  h2.big { font-family:'Barlow Condensed'; font-weight:400; text-transform:uppercase; font-size:24pt; line-height:1; letter-spacing:.04em; margin:3mm 0 5mm; }
+
+  /* ---------- Tapa ---------- */
+  .cover .photo { position:absolute; inset:0; background:url('img/amb-cover.jpg') 51% center/cover; filter:brightness(.85) saturate(.8); }
+  .cover .shade { position:absolute; inset:0; background:linear-gradient(180deg, rgba(11,11,12,.9) 0%, rgba(11,11,12,.25) 28%, rgba(11,11,12,.2) 50%, rgba(11,11,12,.98) 80%); }
+  .cover .top { position:absolute; top:16mm; left:16mm; right:16mm; display:flex; justify-content:space-between; align-items:flex-start; }
+  .cover .top img { height:13mm; }
+  .cover .bottom { position:absolute; left:16mm; right:16mm; bottom:18mm; }
+  .cover h1 { font-family:'Barlow Condensed'; font-weight:500; font-size:70pt; line-height:.9; letter-spacing:.02em; margin:5mm 0 0; text-transform:uppercase; }
+  .cover h1 em { font-style:normal; font-weight:300; color:var(--gold); }
+  .cover .sub { margin-top:6mm; font-family:'Barlow Condensed'; text-transform:uppercase; letter-spacing:.3em; font-size:11pt; color:#cfccc5; }
+  .cover .tags { margin-top:8mm; display:flex; gap:3mm; flex-wrap:wrap; }
+  .cover .tags span { border:1px solid rgba(201,169,110,.6); font-family:'Barlow Condensed'; text-transform:uppercase; letter-spacing:.2em; font-size:8pt; padding:2mm 3.5mm; }
+  .dist { display:flex; align-items:center; gap:5mm; margin-top:10mm; padding-top:6mm; border-top:1px solid var(--line); }
+  .dist span { font-family:'Barlow Condensed'; text-transform:uppercase; letter-spacing:.3em; font-size:8pt; color:var(--gold); line-height:1.5; }
+  .dist img { height:5.5mm; }
+
+  /* ---------- Presentación ---------- */
+  .p2 .intro { display:grid; grid-template-columns:1fr 68mm; gap:9mm; }
+  .p2 p { font-size:9.6pt; line-height:1.6; color:#c9c6bf; margin:0 0 3mm; }
+  .p2 p b { color:var(--txt); font-weight:500; }
+  .badge { border:1px solid var(--line); border-left:2px solid var(--gold); background:var(--panel); padding:7mm 6mm; display:flex; flex-direction:column; gap:4mm; justify-content:center; }
+  .badge img { width:100%; }
+  .badge p { font-size:8.5pt !important; margin:0 !important; }
+  .lineas { margin-top:auto; display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:5mm; }
+  .lin { background:var(--panel); border:1px solid var(--line); display:flex; flex-direction:column; }
+  .lin .pic { height:56mm; background:var(--light); display:flex; align-items:flex-end; justify-content:center; gap:1.5mm; padding:4mm 2mm 0; }
+  .lin .pic { overflow:hidden; }
+  .lin .pic img { height:95%; max-width:48%; object-fit:contain; object-position:bottom; mix-blend-mode:multiply; }
+  .lin .t { padding:3mm 3.5mm 3.5mm; }
+  .lin .t .n { font-family:'Barlow Condensed'; font-weight:300; color:var(--gold); font-size:8.5pt; letter-spacing:.2em; }
+  .lin .t h4 { font-family:'Barlow Condensed'; font-weight:500; text-transform:uppercase; letter-spacing:.08em; font-size:11.5pt; margin:.5mm 0 1mm; }
+  .lin .t p { font-size:7.4pt; line-height:1.38; color:#a9a69f; margin:0; }
+
+  /* ---------- Página de línea ---------- */
+  .lp .hero { position:absolute; top:0; left:0; right:0; height:96mm; background-size:cover; background-position:center; filter:saturate(.85); }
+  .lp .hero::after { content:''; position:absolute; inset:0; background:linear-gradient(180deg, rgba(11,11,12,.55) 0%, rgba(11,11,12,0) 30%, rgba(11,11,12,.2) 60%, rgba(11,11,12,1) 100%); }
+  .lp .htop { position:absolute; top:12mm; left:14mm; right:14mm; display:flex; justify-content:space-between; align-items:center; }
+  .lp .htop img { height:8mm; }
+  .lp .htop img.g { height:3.6mm; opacity:.85; }
+  .lp .head { position:absolute; top:66mm; left:14mm; right:14mm; display:flex; justify-content:space-between; align-items:flex-end; }
+  .lp .head h2 { font-family:'Barlow Condensed'; text-transform:uppercase; letter-spacing:.04em; font-size:40pt; font-weight:500; margin:2mm 0 0; line-height:.9; }
+  .lp .head .tag { font-family:'Barlow Condensed'; text-transform:uppercase; letter-spacing:.25em; font-size:8.5pt; color:#cfccc5; text-align:right; line-height:1.6; }
+  .lp .body { position:absolute; top:104mm; left:14mm; right:14mm; bottom:16mm; display:flex; flex-direction:column; }
+  .lead { font-size:9.3pt; line-height:1.58; color:#c9c6bf; margin:0 0 5mm; }
+  .lead b { color:var(--txt); font-weight:500; }
+
+  .doors { background:var(--light); display:flex; justify-content:space-around; align-items:flex-end; padding:5mm 3mm 0; height:66mm; flex:none; position:relative; }
+  .doors::after { content:''; position:absolute; left:0; right:0; bottom:0; height:13mm; background:#d9d8d4; z-index:0; }
+  .door { display:flex; flex-direction:column; align-items:center; height:100%; position:relative; z-index:1; }
+  .door img { height:calc(100% - 9mm); mix-blend-mode:multiply; }
+  .door b { font-family:'Barlow Condensed'; font-weight:500; text-transform:uppercase; letter-spacing:.16em; font-size:7.4pt; color:#3a3936; margin-top:2mm; text-align:center; line-height:1.1; white-space:nowrap; }
+  .door b small { display:block; font-weight:400; letter-spacing:.08em; font-size:5.8pt; color:#77746d; }
+  .doors + .doors { margin-top:3mm; }
+
+  .feat { list-style:none; margin:0; padding:0; font-size:8.4pt; }
+  .feat li { padding:1.9mm 0; border-top:1px solid var(--line); display:flex; gap:3mm; color:var(--txt); line-height:1.35; }
+  .feat li::before { content:''; width:3mm; height:1px; background:var(--gold); margin-top:2mm; flex:none; }
+  .feat li span { color:#bdbab3; }
+  .feat.cols { columns:2; column-gap:7mm; }
+  .feat.cols li { break-inside:avoid; }
+
+  .ficha dl { margin:0; display:grid; grid-template-columns:22mm 1fr; font-size:7.8pt; line-height:1.42; }
+  .ficha dt { font-family:'Barlow Condensed'; text-transform:uppercase; letter-spacing:.2em; font-size:6.8pt; color:var(--gold); padding:1.6mm 0; border-top:1px solid var(--line); }
+  .ficha dd { margin:0; color:#bdbab3; padding:1.6mm 0; border-top:1px solid var(--line); }
+  .ficha dd b { color:var(--txt); font-weight:500; }
+  .ficha h4 { font-family:'Barlow Condensed'; font-weight:400; text-transform:uppercase; letter-spacing:.12em; font-size:10.5pt; margin:0 0 1.5mm; }
+
+  /* Tabla de disponibilidad */
+  .disp { width:100%; border-collapse:collapse; font-size:7.8pt; }
+  .disp th { font-family:'Barlow Condensed'; font-weight:500; text-transform:uppercase; letter-spacing:.1em; font-size:7.6pt; color:var(--gold); padding:0 1mm 1.8mm; border-bottom:1px solid var(--gold); text-align:center; white-space:nowrap; }
+  .disp th:first-child { text-align:left; color:var(--muted); font-weight:400; letter-spacing:.2em; font-size:6.6pt; }
+  .disp td { padding:1.35mm 1mm; border-bottom:1px solid var(--line); text-align:center; color:var(--txt); }
+  .disp td:first-child { text-align:left; font-family:'Barlow Condensed'; letter-spacing:.08em; color:#bdbab3; white-space:nowrap; }
+  .disp td.x::after { content:''; display:inline-block; width:1.6mm; height:1.6mm; border-radius:50%; background:var(--gold); }
+  .disp-nota { font-size:6.8pt; color:var(--muted); margin-top:2mm; }
+
+  .box { border:1px solid var(--line); border-left:2px solid var(--gold); background:var(--panel); padding:4.5mm 5mm; font-size:8pt; line-height:1.5; color:#bdbab3; }
+  .box b { color:var(--txt); font-weight:500; }
+  .pic-light { background:var(--light); display:flex; align-items:center; justify-content:center; }
+  .pic-light img { max-width:100%; max-height:100%; mix-blend-mode:multiply; }
+  .photo-card { position:relative; background-size:cover; background-position:center; }
+  .photo-card::after { content:''; position:absolute; inset:0; background:linear-gradient(180deg, rgba(11,11,12,0) 50%, rgba(11,11,12,.92) 100%); }
+  .photo-card .t { position:absolute; left:4mm; right:4mm; bottom:4mm; z-index:1; }
+  .photo-card h4 { font-family:'Barlow Condensed'; font-weight:500; text-transform:uppercase; font-size:15pt; letter-spacing:.04em; margin:1mm 0 .5mm; line-height:1; }
+  .photo-card p { font-size:7.6pt; color:#cfccc5; margin:0; line-height:1.4; }
+
+  .acc { display:grid; grid-template-columns:repeat(4,1fr); gap:3mm; }
+  .acc div { background:var(--light); height:20mm; display:flex; align-items:center; justify-content:center; padding:2mm; }
+  .acc img { max-width:100%; max-height:100%; }
+
+  /* Manos */
+  .manos { display:grid; grid-template-columns:repeat(4,1fr); gap:4mm; }
+  .mano { border:1px solid var(--line); background:var(--panel); padding:3mm; text-align:center; }
+  .mano svg { width:100%; height:auto; display:block; }
+  .mano b { display:block; font-family:'Barlow Condensed'; font-weight:500; text-transform:uppercase; letter-spacing:.14em; font-size:7.6pt; margin-top:2mm; }
+  .mano small { display:block; font-family:'Barlow Condensed'; text-transform:uppercase; letter-spacing:.14em; font-size:6.4pt; color:var(--muted); margin-top:.5mm; }
+
+  /* Contratapa */
+  .back .grid { position:absolute; inset:0; background:
+      linear-gradient(90deg, rgba(201,169,110,.06) 1px, transparent 1px) 0 0/21mm 21mm,
+      linear-gradient(rgba(201,169,110,.06) 1px, transparent 1px) 0 0/21mm 21mm; }
+  .back .glow { position:absolute; right:-30mm; top:0; width:190mm; height:150mm; background:radial-gradient(closest-side, rgba(201,169,110,.12), transparent); }
+  .back .row { position:absolute; top:24mm; left:16mm; right:16mm; display:flex; justify-content:center; align-items:flex-end; gap:5mm; height:66mm; }
+  .back .row img { height:100%; filter:drop-shadow(0 6mm 10mm rgba(0,0,0,.6)); }
+  .back .row img:nth-child(odd) { height:92%; }
+  .back .center { position:absolute; left:16mm; right:16mm; bottom:34mm; }
+  .back .center img.logo { height:16mm; }
+  .back h2 { font-family:'Barlow Condensed'; font-weight:400; text-transform:uppercase; font-size:24pt; line-height:1.05; letter-spacing:.04em; margin:8mm 0 7mm; max-width:140mm; }
+  .contacto { display:grid; grid-template-columns:1fr 30mm; gap:8mm; align-items:end; border-top:1px solid var(--line); padding-top:7mm; }
+  .contacto dl { margin:0; display:grid; grid-template-columns:24mm 1fr; row-gap:2.6mm; font-size:9.5pt; }
+  .contacto dt { font-family:'Barlow Condensed'; text-transform:uppercase; letter-spacing:.25em; font-size:7.5pt; color:var(--gold); padding-top:.6mm; }
+  .contacto dd { margin:0; }
+  .qr { background:#fff; padding:2mm; width:30mm; height:30mm; }
+  .qr img, .qr canvas { width:100% !important; height:100% !important; display:block; }
+  .qr-cap { font-family:'Barlow Condensed'; text-transform:uppercase; letter-spacing:.2em; font-size:6.5pt; color:var(--muted); text-align:center; margin-top:2mm; }
+  .legal { position:absolute; left:16mm; right:16mm; bottom:9mm; font-size:6.5pt; color:#5d5b56; line-height:1.4; display:flex; justify-content:space-between; align-items:center; gap:8mm; }
+  .legal img { height:3mm; opacity:.5; }
+
+  @media screen and (max-width: 860px) {
+    .page { zoom:calc((100vw - 32px) / 794px); }
+  }
+  @page { size:A4; margin:0; }
+  @media print {
+    html, body { background:var(--bg); }
+    body { padding:0; gap:0; display:block; }
+    .tools { display:none; }
+    .page { box-shadow:none; page-break-after:always; break-after:page; zoom:1; }
+    * { -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+  }
+  .disp.lg td { padding:1.9mm 1mm; font-size:8.4pt; }
+</style>
+</head>
+<body>
+
+<div class="tools">
+  <span>Puertas de exterior · 11 páginas A4</span>
+  <button onclick="window.print()">Guardar PDF</button>
+</div>
+
+<!-- 01 TAPA -->
+<section class="page cover">
+  <div class="photo"></div>
+  <div class="shade"></div>
+  <div class="top">
+    <img src="img/logo.png" alt="Aluwal Aberturas">
+    <div class="eyebrow">Catálogo 2026</div>
+  </div>
+  <div class="bottom">
+    <div class="rule"></div>
+    <h1>Puertas<br><em>de exterior</em></h1>
+    <div class="sub">Seguridad · multianclaje · cortafuego</div>
+    <div class="tags">
+      <span>Cortafuego</span><span>Premium</span><span>Exclusive</span><span>Platinum</span><span>Gold</span><span>Silver</span>
+    </div>
+    <div class="dist">
+      <span>Distribuidor<br>oficial</span>
+      <img src="img/hierromas.png" alt="Hierromas">
+    </div>
+  </div>
+</section>
+
+<!-- 02 PRESENTACIÓN -->
+<section class="page p2">
+  <div class="pad">
+    <div class="intro">
+      <div>
+        <div class="eyebrow">Puertas de exterior</div>
+        <h2 class="big">La puerta de entrada,<br>bien resuelta</h2>
+        <p>Para la entrada de la casa trabajamos con <b>Hierromas</b>, fábrica de San Martín con más de 70 años haciendo puertas de chapa. En Aluwal somos <b>distribuidores oficiales</b>.</p>
+        <p>Hay una puerta para cada caso: desde la Silver, la más económica, hasta la Premium multianclaje foliada símil madera. Y la línea Cortafuego, homologada por el INTI y por Bomberos, para edificios y locales.</p>
+        <p><b>Te asesoramos con el modelo, la medida y la mano de apertura, y te la llevamos a la obra.</b></p>
+      </div>
+      <div class="badge">
+        <div class="eyebrow">Distribuidor oficial</div>
+        <img src="img/hierromas.png" alt="Hierromas">
+        <p>Mismo producto y misma garantía de fábrica, con la atención de Aluwal.</p>
+      </div>
+    </div>
+
+    <div class="lineas">
+      <div class="lin"><div class="pic"><img src="img/fr60.jpg" alt=""><img src="img/fr30.jpg" alt=""></div>
+        <div class="t"><div class="n">01</div><h4>Cortafuego</h4><p>FR30 y FR60 homologadas INTI. 220 y 227 aprobadas por Bomberos.</p></div></div>
+      <div class="lin"><div class="pic"><img src="img/premium-780.jpg" alt=""><img src="img/premium-741.jpg" alt=""></div>
+        <div class="t"><div class="n">02</div><h4>Premium</h4><p>Multianclaje, foliada en PVC. Hasta 90 mm de espesor.</p></div></div>
+      <div class="lin"><div class="pic"><img src="img/exclusive-883.jpg" alt=""><img src="img/exclusive-879.jpg" alt=""></div>
+        <div class="t"><div class="n">03</div><h4>Exclusive</h4><p>Chapa electrozincada, lisa o con textura. Barral incluido.</p></div></div>
+      <div class="lin"><div class="pic"><img src="img/platinum-200.jpg" alt=""><img src="img/platinum-207.jpg" alt=""></div>
+        <div class="t"><div class="n">04</div><h4>Platinum</h4><p>Doble chapa 18. Opción con cerradura digital.</p></div></div>
+      <div class="lin"><div class="pic"><img src="img/gold-380.jpg" alt=""><img src="img/gold-206.jpg" alt=""></div>
+        <div class="t"><div class="n">05</div><h4>Gold</h4><p>La clásica de doble chapa 20. La de más medidas.</p></div></div>
+      <div class="lin"><div class="pic"><img src="img/silver-411.jpg" alt=""><img src="img/silver-406.jpg" alt=""></div>
+        <div class="t"><div class="n">06</div><h4>Silver</h4><p>La mejor relación precio y calidad.</p></div></div>
+    </div>
+  </div>
+  <div class="folio"><img src="img/logo.png" alt=""><span>Puertas de exterior · 02</span></div>
+</section>
+
+<!-- 03 CORTAFUEGO -->
+<section class="page lp">
+  <div class="hero" style="background-image:url('img/amb-fuego.jpg'); background-position:40% 60%"></div>
+  <div class="htop"><img src="img/logo.png" alt=""><img class="g" src="img/hierromas.png" alt=""></div>
+  <div class="head">
+    <div><div class="eyebrow">Línea 01</div><h2>Cortafuego</h2></div>
+    <div class="tag">Homologadas INTI<br>y por Bomberos</div>
+  </div>
+  <div class="body">
+    <p class="lead">Hechas para <b>contener un incendio y ganar tiempo</b> para la evacuación. Desde 2019 las FR30 y FR60 están certificadas por el INTI bajo norma IRAM 11949:2014.</p>
+    <div class="doors" style="height:60mm">
+      <div class="door"><img src="img/fr60.jpg" alt=""><b>FR60<small>INTI</small></b></div>
+      <div class="door"><img src="img/fr30.jpg" alt=""><b>FR30<small>INTI</small></b></div>
+      <div class="door"><img src="img/cf-227.jpg" alt=""><b>227<small>Bomberos</small></b></div>
+      <div class="door"><img src="img/cf-220-doble.jpg" alt=""><b>220 / 227<small>Doble hoja</small></b></div>
+      <div class="door"><img src="img/cf-220-barra.jpg" alt=""><b>220<small>Bomberos</small></b></div>
+    </div>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:7mm; margin-top:5mm">
+      <div>
+        <div class="sec-tit"><h3>220 / 227</h3><div class="rule"></div></div>
+        <ul class="feat">
+          <li>Hoja de 42 mm de espesor</li>
+          <li>Relleno de material volcánico incombustible</li>
+          <li>Bisagra a munición</li>
+          <li>Pintura antióxido secada a horno</li>
+          <li><span><b style="color:var(--txt);font-weight:500">220</b> en chapa 20 · <b style="color:var(--txt);font-weight:500">227</b> en chapa 18</span></li>
+        </ul>
+        <div class="sec-tit" style="margin-top:4mm"><h3>Opcionales</h3><div class="rule"></div></div>
+        <p style="font-size:7.8pt; line-height:1.5; color:#bdbab3; margin:0">Cierrapuerta hidráulico · Barra o barra doble antipánico · Cerradura de seguridad · Cerradura bolita · Cerradura vaivén a rodillo · Burlete intumescente · Cerradura electrónica (FR30).</p>
+      </div>
+      <div>
+        <div class="sec-tit"><h3>Medidas</h3><div class="rule"></div></div>
+        <table class="disp">
+          <tr><th>cm</th><th>FR30</th><th>FR60</th><th>220</th><th>227</th></tr>
+          <tr><td>80 × 200</td><td class="x"></td><td class="x"></td><td class="x"></td><td class="x"></td></tr>
+          <tr><td>90 × 200</td><td class="x"></td><td class="x"></td><td class="x"></td><td class="x"></td></tr>
+          <tr><td>160 × 200</td><td></td><td></td><td></td><td class="x"></td></tr>
+          <tr><td>180 × 200</td><td></td><td></td><td></td><td class="x"></td></tr>
+        </table>
+        <div class="disp-nota">Medidas y modelos especiales: consultanos.</div>
+        <div class="sec-tit" style="margin-top:4mm"><h3>Señalética</h3><div class="rule"></div></div>
+        <div class="acc">
+          <div><img src="img/acc-pushpull.jpg" alt=""></div>
+          <div><img src="img/acc-banio.jpg" alt=""></div>
+          <div><img src="img/acc-3b.jpg" alt=""></div>
+          <div><img src="img/acc-placa.jpg" alt=""></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="folio"><img src="img/logo.png" alt=""><span>Línea Cortafuego · 03</span></div>
+</section>
+
+<!-- 04 PREMIUM 1 -->
+<section class="page lp">
+  <div class="hero" style="background-image:url('img/amb-premium2.jpg'); background-position:55% 50%"></div>
+  <div class="htop"><img src="img/logo.png" alt=""><img class="g" src="img/hierromas.png" alt=""></div>
+  <div class="head">
+    <div><div class="eyebrow">Línea 02</div><h2>Premium</h2></div>
+    <div class="tag">Multianclaje<br>foliada en PVC</div>
+  </div>
+  <div class="body">
+    <p class="lead">Chapa galvanizada <b>foliada en PVC por transferencia</b>: no se pinta nunca, no le hace nada el agua ni el sol. Cerradura multianclaje y relleno de roca volcánica. Es la puerta más segura del catálogo.</p>
+    <div class="doors" style="height:64mm">
+      <div class="door"><img src="img/premium-740.jpg" alt=""><b>740</b></div>
+      <div class="door"><img src="img/premium-741.jpg" alt=""><b>741</b></div>
+      <div class="door"><img src="img/premium-781.jpg" alt=""><b>781</b></div>
+      <div class="door"><img src="img/premium-790.jpg" alt=""><b>790<small>nuevo</small></b></div>
+      <div class="door"><img src="img/premium-780.jpg" alt=""><b>780<small>símil madera</small></b></div>
+    </div>
+    <div style="display:grid; grid-template-columns:52mm 1fr; gap:7mm; margin-top:5mm; flex:1; min-height:0">
+      <div class="pic-light" style="padding:3mm"><img src="img/premium-despiece.jpg" alt="Despiece Premium"></div>
+      <div>
+        <div class="sec-tit"><h3>Qué trae · 70 mm</h3><div class="rule"></div></div>
+        <ul class="feat cols">
+          <li>12 pernos de anclaje</li>
+          <li>Visor panorámico 180°</li>
+          <li>Cerradura de seguridad multianclaje</li>
+          <li>Barral platil</li>
+          <li>Relleno ignífugo con roca volcánica</li>
+          <li>Pintura final epoxi curada a horno</li>
+          <li>Umbral de acero inoxidable</li>
+          <li>Llaves de obra y 4 finales multipunto</li>
+          <li>4 bisagras ocultas</li>
+          <li>Marco y hoja reforzados</li>
+        </ul>
+        <div class="box" style="margin-top:4mm"><span class="eyebrow">Nuevo · 790</span><br>17 pernos de anclaje, sistema antipalanca y bisagras ocultas reforzadas. Versión <b>791 con cerradura electrónica</b>.</div>
+      </div>
+    </div>
+  </div>
+  <div class="folio"><img src="img/logo.png" alt=""><span>Línea Premium · 04</span></div>
+</section>
+
+<!-- 05 PREMIUM 2 -->
+<section class="page">
+  <div class="pad">
+    <div class="sec-tit"><h3>Premium · Símil madera</h3><div class="rule"></div></div>
+    <div style="display:grid; grid-template-columns:1.25fr 1fr; gap:5mm; height:110mm">
+      <div class="photo-card" style="background-image:url('img/amb-premium.jpg'); background-position:50% 50%">
+        <div class="t"><div class="eyebrow">Foliada en PVC</div><h4>Premium 760</h4><p>Multianclaje, 70 mm de espesor.</p></div>
+      </div>
+      <div class="photo-card" style="background-image:url('img/amb-premium-seg.jpg')">
+        <div class="t"><div class="eyebrow">791</div><h4>Cerradura electrónica</h4><p>Sobre la base de la 790.</p></div>
+      </div>
+    </div>
+    <div class="doors" style="margin-top:5mm; height:60mm">
+      <div class="door"><img src="img/premium-760.jpg" alt=""><b>760<small>70 mm</small></b></div>
+      <div class="door"><img src="img/premium-770.jpg" alt=""><b>770<small>90 mm · 8 pernos centrales</small></b></div>
+      <div class="door"><img src="img/premium-780.jpg" alt=""><b>780<small>70 mm</small></b></div>
+      <div class="door"><img src="img/premium-880.jpg" alt=""><b>880<small>50 mm · beige</small></b></div>
+    </div>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:7mm; margin-top:6mm">
+      <div>
+        <div class="sec-tit"><h3>Medidas · lisas</h3><div class="rule"></div></div>
+        <table class="disp">
+          <tr><th>cm</th><th>740</th><th>741</th><th>781</th><th>790</th><th>791</th></tr>
+          <tr><td>80 × 200</td><td class="x"></td><td class="x"></td><td></td><td class="x"></td><td class="x"></td></tr>
+          <tr><td>90 × 200</td><td class="x"></td><td class="x"></td><td></td><td></td><td></td></tr>
+          <tr><td>110 × 225</td><td></td><td></td><td class="x"></td><td></td><td></td></tr>
+        </table>
+        <div class="disp-nota">740 blanca. 741, 781, 790 y 791 en negro/grafito.</div>
+      </div>
+      <div>
+        <div class="sec-tit"><h3>Medidas · símil madera</h3><div class="rule"></div></div>
+        <table class="disp">
+          <tr><th>cm</th><th>760</th><th>770</th><th>780</th><th>880</th></tr>
+          <tr><td>80 × 200</td><td class="x"></td><td class="x"></td><td></td><td class="x"></td></tr>
+          <tr><td>90 × 200</td><td class="x"></td><td></td><td></td><td></td></tr>
+          <tr><td>110 × 225</td><td></td><td></td><td class="x"></td><td></td></tr>
+        </table>
+        <div class="disp-nota">Espesores: 760 / 780 de 70 mm · 770 de 90 mm · 880 de 50 mm.</div>
+      </div>
+    </div>
+    <div class="sec-tit" style="margin-top:6mm"><h3>Por qué Premium</h3><div class="rule"></div></div>
+    <ul class="feat cols">
+      <li>Libre de mantenimiento</li>
+      <li>Lista para usar, sin pintar</li>
+      <li>Aislación acústica y térmica</li>
+      <li>Resiste agua y rayos UV</li>
+    </ul>
+  </div>
+  <div class="folio"><img src="img/logo.png" alt=""><span>Línea Premium · 05</span></div>
+</section>
+
+<!-- 06 EXCLUSIVE -->
+<section class="page lp">
+  <div class="hero" style="background-image:url('img/amb-exclusive.jpg'); background-position:62% 50%"></div>
+  <div class="htop"><img src="img/logo.png" alt=""><img class="g" src="img/hierromas.png" alt=""></div>
+  <div class="head">
+    <div><div class="eyebrow">Línea 03</div><h2>Exclusive</h2></div>
+    <div class="tag">Lisas o con textura<br>barral incluido</div>
+  </div>
+  <div class="body">
+    <p class="lead">Chapa <b>electrozincada anticorrosión</b>, lista para usar sin pintar. Todos los modelos traen barral.</p>
+    <div class="doors" style="height:52mm">
+      <div class="door"><img src="img/exclusive-802.jpg" alt=""><b>802</b></div>
+      <div class="door"><img src="img/exclusive-803.jpg" alt=""><b>803</b></div>
+      <div class="door"><img src="img/exclusive-877.jpg" alt=""><b>877</b></div>
+      <div class="door"><img src="img/exclusive-877n.jpg" alt=""><b>877</b></div>
+      <div class="door"><img src="img/exclusive-879.jpg" alt=""><b>879</b></div>
+      <div class="door"><img src="img/exclusive-879n.jpg" alt=""><b>879</b></div>
+    </div>
+    <div class="doors" style="height:52mm">
+      <div class="door"><img src="img/exclusive-884.jpg" alt=""><b>884<small>negra · textura</small></b></div>
+      <div class="door"><img src="img/exclusive-883.jpg" alt=""><b>883<small>caoba</small></b></div>
+      <div class="door"><img src="img/exclusive-885.jpg" alt=""><b>885<small>textura</small></b></div>
+      <div class="door"><img src="img/exclusive-886.jpg" alt=""><b>886<small>caoba</small></b></div>
+    </div>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:7mm; margin-top:5mm">
+      <div class="ficha">
+        <dl>
+          <dt>Hoja</dt><dd>42 mm, <b>doble contacto</b>, inyectada en poliuretano ecológico.</dd>
+          <dt>Cierre</dt><dd>Cerradura de seguridad doble paleta. Bisagra a munición.</dd>
+          <dt>883 a 886</dt><dd>Diseños con textura símil madera. Cerradura <b>europerfil</b>, pernos redondos y barral recto.</dd>
+        </dl>
+      </div>
+      <div>
+        <table class="disp">
+          <tr><th>cm</th><th>802</th><th>803</th><th>877</th><th>879</th><th>883</th><th>884</th><th>885</th><th>886</th></tr>
+          <tr><td>80 × 200</td><td class="x"></td><td class="x"></td><td class="x"></td><td class="x"></td><td class="x"></td><td class="x"></td><td class="x"></td><td class="x"></td></tr>
+          <tr><td>90 × 200</td><td class="x"></td><td class="x"></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+        </table>
+        <ul class="feat" style="margin-top:3mm">
+          <li>Aislación térmica y acústica</li>
+          <li>Resiste agua y rayos UV</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="folio"><img src="img/logo.png" alt=""><span>Línea Exclusive · 06</span></div>
+</section>
+
+<!-- 07 PLATINUM -->
+<section class="page lp">
+  <div class="hero" style="background-image:url('img/amb-platinum.jpg'); background-position:35% 50%"></div>
+  <div class="htop"><img src="img/logo.png" alt=""><img class="g" src="img/hierromas.png" alt=""></div>
+  <div class="head">
+    <div><div class="eyebrow">Línea 04</div><h2>Platinum</h2></div>
+    <div class="tag">Doble chapa 18<br>súper seguridad</div>
+  </div>
+  <div class="body">
+    <p class="lead">Estructura en <b>doble chapa 18</b> con marco americano. La 207 viene con <b>cerradura digital</b>: abre con huella, clave o tarjeta y se maneja desde el celular.</p>
+    <div class="doors" style="height:82mm">
+      <div class="door"><img src="img/platinum-207.jpg" alt=""><b>207<small>cerradura digital</small></b></div>
+      <div class="door"><img src="img/platinum-207vip.jpg" alt=""><b>207 VIP<small>europerfil · nuevo</small></b></div>
+      <div class="door"><img src="img/platinum-200.jpg" alt=""><b>200<small>renovado</small></b></div>
+      <div class="door"><img src="img/platinum-210.jpg" alt=""><b>210<small>kit de seguridad</small></b></div>
+    </div>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:7mm; margin-top:5mm">
+      <div class="ficha">
+        <dl>
+          <dt>Hoja</dt><dd>42 mm, doble contacto, inyectada en poliuretano ecológico.</dd>
+          <dt>Marco</dt><dd>Marco americano. Bisagra a munición.</dd>
+          <dt>Terminación</dt><dd>Pintura antióxido secada a horno.</dd>
+          <dt>Cierre</dt><dd>Cerradura de seguridad doble paleta.</dd>
+          <dt>Kit 210</dt><dd>Marco y hoja <b>antibarreta</b> reforzados con hierro ángulo, pernos antipalanca, cerradura y dos cerrojos con llave combinada, barral platil.</dd>
+        </dl>
+      </div>
+      <div>
+        <table class="disp">
+          <tr><th>cm</th><th>200</th><th>207</th><th>207 VIP</th><th>210</th></tr>
+          <tr><td>70 × 200</td><td></td><td class="x"></td><td></td><td></td></tr>
+          <tr><td>80 × 200</td><td class="x"></td><td class="x"></td><td class="x"></td><td class="x"></td></tr>
+          <tr><td>90 × 200</td><td class="x"></td><td class="x"></td><td></td><td></td></tr>
+          <tr><td>140 × 200</td><td></td><td class="x"></td><td></td><td></td></tr>
+          <tr><td>160 × 200</td><td></td><td class="x"></td><td></td><td></td></tr>
+          <tr><td>180 × 200</td><td></td><td class="x"></td><td></td><td></td></tr>
+          <tr><td>240 × 200</td><td></td><td class="x"></td><td></td><td></td></tr>
+        </table>
+        <div class="disp-nota">Medidas y modelos especiales: consultanos.</div>
+      </div>
+    </div>
+  </div>
+  <div class="folio"><img src="img/logo.png" alt=""><span>Línea Platinum · 07</span></div>
+</section>
+
+<!-- 08 GOLD -->
+<section class="page lp">
+  <div class="hero" style="background-image:url('img/amb-gold.jpg'); background-position:52% 50%"></div>
+  <div class="htop"><img src="img/logo.png" alt=""><img class="g" src="img/hierromas.png" alt=""></div>
+  <div class="head">
+    <div><div class="eyebrow">Línea 05</div><h2>Gold</h2></div>
+    <div class="tag">Doble chapa 20<br>la clásica</div>
+  </div>
+  <div class="body">
+    <p class="lead">La puerta de chapa de toda la vida, en <b>doble chapa 20</b>. Es la línea con más modelos y más medidas, incluyendo dobles hojas y con postigo de abrir.</p>
+    <div class="doors" style="height:56mm">
+      <div class="door"><img src="img/gold-380.jpg" alt=""><b>380<small>nuevo</small></b></div>
+      <div class="door"><img src="img/gold-206.jpg" alt=""><b>206</b></div>
+      <div class="door"><img src="img/gold-206n.jpg" alt=""><b>206 N</b></div>
+      <div class="door"><img src="img/gold-208.jpg" alt=""><b>208</b></div>
+      <div class="door"><img src="img/gold-205.jpg" alt=""><b>205</b></div>
+      <div class="door"><img src="img/gold-country.jpg" alt=""><b>Country</b></div>
+    </div>
+    <div class="doors" style="height:56mm">
+      <div class="door"><img src="img/gold-340.jpg" alt=""><b>340<small>insertos inox</small></b></div>
+      <div class="door"><img src="img/gold-272.jpg" alt=""><b>272<small>postigo</small></b></div>
+      <div class="door"><img src="img/gold-273.jpg" alt=""><b>273<small>postigo</small></b></div>
+      <div class="door"><img src="img/gold-277.jpg" alt=""><b>277<small>postigo</small></b></div>
+      <div class="door"><img src="img/gold-370.jpg" alt=""><b>370<small>apliques PVC</small></b></div>
+    </div>
+    <div class="ficha" style="margin-top:5mm">
+      <dl style="grid-template-columns:22mm 1fr 22mm 1fr">
+        <dt>Hoja</dt><dd style="padding-right:5mm">42 mm, doble contacto, inyectada en poliuretano ecológico.</dd>
+        <dt>Cierre</dt><dd>Cerradura de seguridad doble paleta. Bisagra a munición.</dd>
+        <dt>Terminación</dt><dd style="padding-right:5mm">Pintura antióxido secada a horno.</dd>
+        <dt>Detalles</dt><dd>Postigo de abrir en 272, 273 y 277. Apliques de PVC aluminizado en 370. Barral incluido en la mayoría de los modelos.</dd>
+      </dl>
+    </div>
+  </div>
+  <div class="folio"><img src="img/logo.png" alt=""><span>Línea Gold · 08</span></div>
+</section>
+
+<!-- 09 GOLD MEDIDAS -->
+<section class="page">
+  <div class="pad">
+    <div class="photo-card" style="height:72mm; background-image:url('img/amb-gold2.jpg'); background-position:50% 60%">
+      <div class="t"><div class="eyebrow">Línea Gold</div><h4>Gold 340</h4><p>Con insertos de acero inoxidable y barral.</p></div>
+    </div>
+    <div class="sec-tit" style="margin-top:6mm"><h3>Gold · Medidas disponibles</h3><div class="rule"></div></div>
+    <table class="disp lg">
+      <tr><th>cm</th><th>205</th><th>206</th><th>206 N</th><th>208</th><th>272</th><th>273</th><th>277</th><th>340</th><th>370</th><th>380</th><th>Country</th></tr>
+      <tr><td>60 × 200</td><td></td><td class="x"></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td>70 × 200</td><td></td><td class="x"></td><td></td><td></td><td></td><td class="x"></td><td class="x"></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td>80 × 200</td><td class="x"></td><td class="x"></td><td class="x"></td><td class="x"></td><td class="x"></td><td class="x"></td><td class="x"></td><td class="x"></td><td class="x"></td><td class="x"></td><td></td></tr>
+      <tr><td>90 × 200</td><td class="x"></td><td class="x"></td><td></td><td class="x"></td><td></td><td></td><td class="x"></td><td></td><td class="x"></td><td></td><td></td></tr>
+      <tr><td>100 × 200</td><td></td><td class="x"></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td>120 × 200</td><td></td><td class="x"></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td>80+40 × 200</td><td class="x"></td><td class="x"></td><td></td><td></td><td></td><td></td><td></td><td class="x"></td><td class="x"></td><td></td><td></td></tr>
+      <tr><td>100 × 220 + 0,50</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td class="x"></td></tr>
+      <tr><td>140 × 200</td><td></td><td class="x"></td><td></td><td></td><td></td><td class="x"></td><td class="x"></td><td class="x"></td><td></td><td></td><td></td></tr>
+      <tr><td>160 × 200</td><td class="x"></td><td class="x"></td><td></td><td class="x"></td><td></td><td class="x"></td><td class="x"></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td>180 × 200</td><td></td><td class="x"></td><td></td><td></td><td></td><td></td><td class="x"></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td>210 × 200</td><td></td><td class="x"></td><td></td><td></td><td></td><td></td><td></td><td></td><td class="x"></td><td></td><td></td></tr>
+      <tr><td>240 × 200</td><td class="x"></td><td class="x"></td><td></td><td></td><td></td><td class="x"></td><td class="x"></td><td></td><td class="x"></td><td></td><td></td></tr>
+      <tr><td>270 × 200</td><td></td><td class="x"></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+    </table>
+    <div class="disp-nota">Medidas en cm (ancho × alto). Medidas y modelos especiales: consultanos.</div>
+    <div class="sec-tit" style="margin-top:7mm"><h3>Mano de apertura</h3><div class="rule"></div></div>
+    <p style="font-size:8.6pt; color:#bdbab3; margin:0 0 4mm; line-height:1.5">Todas las puertas se piden con mano. Mirando la puerta <b style="color:var(--txt);font-weight:500">desde afuera</b>: de qué lado quedan las bisagras y si abre hacia adentro o hacia afuera (marco invertido).</p>
+    <div class="manos">
+      <div class="mano">
+        <svg viewBox="0 0 100 70"><text x="50" y="9" text-anchor="middle" font-size="7" fill="#8a8780" font-family="Barlow Condensed" letter-spacing="1">INTERIOR</text><line x1="4" y1="44" x2="22" y2="44" stroke="#e8e6e1" stroke-width="3"/><line x1="78" y1="44" x2="96" y2="44" stroke="#e8e6e1" stroke-width="3"/><line x1="22" y1="44" x2="22" y2="14" stroke="#c9a96e" stroke-width="2.5"/><path d="M22 14 A30 30 0 0 1 52 44" fill="none" stroke="#c9a96e" stroke-width=".8" stroke-dasharray="2 2"/><circle cx="22" cy="44" r="2" fill="#c9a96e"/><text x="50" y="62" text-anchor="middle" font-size="7" fill="#8a8780" font-family="Barlow Condensed" letter-spacing="1">EXTERIOR</text></svg>
+        <b>Izquierda</b><small>abre hacia adentro</small>
+      </div>
+      <div class="mano">
+        <svg viewBox="0 0 100 70"><text x="50" y="9" text-anchor="middle" font-size="7" fill="#8a8780" font-family="Barlow Condensed" letter-spacing="1">INTERIOR</text><line x1="4" y1="44" x2="22" y2="44" stroke="#e8e6e1" stroke-width="3"/><line x1="78" y1="44" x2="96" y2="44" stroke="#e8e6e1" stroke-width="3"/><line x1="78" y1="44" x2="78" y2="14" stroke="#c9a96e" stroke-width="2.5"/><path d="M78 14 A30 30 0 0 0 48 44" fill="none" stroke="#c9a96e" stroke-width=".8" stroke-dasharray="2 2"/><circle cx="78" cy="44" r="2" fill="#c9a96e"/><text x="50" y="62" text-anchor="middle" font-size="7" fill="#8a8780" font-family="Barlow Condensed" letter-spacing="1">EXTERIOR</text></svg>
+        <b>Derecha</b><small>abre hacia adentro</small>
+      </div>
+      <div class="mano">
+        <svg viewBox="0 0 100 70"><text x="50" y="9" text-anchor="middle" font-size="7" fill="#8a8780" font-family="Barlow Condensed" letter-spacing="1">INTERIOR</text><line x1="4" y1="26" x2="22" y2="26" stroke="#e8e6e1" stroke-width="3"/><line x1="78" y1="26" x2="96" y2="26" stroke="#e8e6e1" stroke-width="3"/><line x1="22" y1="26" x2="22" y2="56" stroke="#c9a96e" stroke-width="2.5"/><path d="M22 56 A30 30 0 0 0 52 26" fill="none" stroke="#c9a96e" stroke-width=".8" stroke-dasharray="2 2"/><circle cx="22" cy="26" r="2" fill="#c9a96e"/><text x="50" y="68" text-anchor="middle" font-size="7" fill="#8a8780" font-family="Barlow Condensed" letter-spacing="1">EXTERIOR</text></svg>
+        <b>Izquierda</b><small>marco invertido</small>
+      </div>
+      <div class="mano">
+        <svg viewBox="0 0 100 70"><text x="50" y="9" text-anchor="middle" font-size="7" fill="#8a8780" font-family="Barlow Condensed" letter-spacing="1">INTERIOR</text><line x1="4" y1="26" x2="22" y2="26" stroke="#e8e6e1" stroke-width="3"/><line x1="78" y1="26" x2="96" y2="26" stroke="#e8e6e1" stroke-width="3"/><line x1="78" y1="26" x2="78" y2="56" stroke="#c9a96e" stroke-width="2.5"/><path d="M78 56 A30 30 0 0 1 48 26" fill="none" stroke="#c9a96e" stroke-width=".8" stroke-dasharray="2 2"/><circle cx="78" cy="26" r="2" fill="#c9a96e"/><text x="50" y="68" text-anchor="middle" font-size="7" fill="#8a8780" font-family="Barlow Condensed" letter-spacing="1">EXTERIOR</text></svg>
+        <b>Derecha</b><small>marco invertido</small>
+      </div>
+    </div>
+
+  </div>
+  <div class="folio"><img src="img/logo.png" alt=""><span>Línea Gold · 09</span></div>
+</section>
+
+<!-- 10 SILVER -->
+<section class="page lp">
+  <div class="hero" style="background-image:url('img/amb-silver.jpg'); background-position:45% 50%"></div>
+  <div class="htop"><img src="img/logo.png" alt=""><img class="g" src="img/hierromas.png" alt=""></div>
+  <div class="head">
+    <div><div class="eyebrow">Línea 06</div><h2>Silver</h2></div>
+    <div class="tag">Precio y calidad<br>bien equilibrados</div>
+  </div>
+  <div class="body">
+    <p class="lead">Hoja de <b>35 mm</b> doble contacto con poliuretano, bisagra embutida y pintura antióxido secada a horno. Aísla bien el ruido y la temperatura a un precio accesible.</p>
+    <div class="doors" style="height:47mm">
+      <div class="door"><img src="img/silver-406.jpg" alt=""><b>406</b></div>
+      <div class="door"><img src="img/silver-407.jpg" alt=""><b>407</b></div>
+      <div class="door"><img src="img/silver-410.jpg" alt=""><b>410</b></div>
+      <div class="door"><img src="img/silver-411.jpg" alt=""><b>411</b></div>
+      <div class="door"><img src="img/silver-412.jpg" alt=""><b>412</b></div>
+      <div class="door"><img src="img/silver-413.jpg" alt=""><b>413</b></div>
+    </div>
+    <div class="doors" style="height:47mm">
+      <div class="door"><img src="img/silver-420.jpg" alt=""><b>420</b></div>
+      <div class="door"><img src="img/silver-456.jpg" alt=""><b>456</b></div>
+      <div class="door"><img src="img/silver-470.jpg" alt=""><b>470</b></div>
+      <div class="door"><img src="img/silver-476.jpg" alt=""><b>476</b></div>
+      <div class="door"><img src="img/silver-480.jpg" alt=""><b>480</b></div>
+      <div class="door"><img src="img/silver-491.jpg" alt=""><b>491</b></div>
+    </div>
+    <table class="disp" style="margin-top:5mm">
+      <tr><th>cm</th><th>406</th><th>407</th><th>410</th><th>411</th><th>412</th><th>413</th><th>420</th><th>456</th><th>470</th><th>476</th><th>480</th><th>491</th></tr>
+      <tr><td>60 × 200</td><td class="x"></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td>70 × 200</td><td class="x"></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td class="x"></td><td></td><td></td></tr>
+      <tr><td>80 × 200</td><td class="x"></td><td class="x"></td><td class="x"></td><td class="x"></td><td class="x"></td><td class="x"></td><td class="x"></td><td class="x"></td><td class="x"></td><td class="x"></td><td class="x"></td><td class="x"></td></tr>
+      <tr><td>90 × 200</td><td class="x"></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td>140 × 200</td><td class="x"></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td class="x"></td><td></td><td></td></tr>
+      <tr><td>160 × 200</td><td class="x"></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td class="x"></td><td></td><td></td></tr>
+      <tr><td>240 × 200</td><td class="x"></td><td></td><td></td><td></td><td></td><td></td><td class="x"></td><td class="x"></td><td class="x"></td><td class="x"></td><td class="x"></td><td class="x"></td></tr>
+    </table>
+    <div class="disp-nota">Barral incluido en los modelos con diseño.</div>
+  </div>
+  <div class="folio"><img src="img/logo.png" alt=""><span>Línea Silver · 10</span></div>
+</section>
+
+<!-- 12 CONTRATAPA -->
+<section class="page back">
+  <div class="grid"></div>
+  <div class="glow"></div>
+  <div class="row">
+    <img src="img/exclusive-883.jpg" alt="">
+    <img src="img/premium-741.jpg" alt="">
+    <img src="img/premium-780.jpg" alt="">
+    <img src="img/platinum-200.jpg" alt="">
+    <img src="img/exclusive-879.jpg" alt="">
+  </div>
+  <div class="center">
+    <img class="logo" src="img/logo.png" alt="Aluwal Aberturas">
+    <h2>Pedí tu presupuesto<br>sin cargo</h2>
+    <div class="contacto">
+      <dl>
+        <dt>WhatsApp</dt><dd>11 2394-8049</dd>
+        <dt>Email</dt><dd>aluwalaberturas@gmail.com</dd>
+        <dt>Fábrica</dt><dd>Estanislao López 561, Pilar Centro</dd>
+        <dt>Web</dt><dd>aluwalaberturas.com</dd>
+        <dt>Instagram</dt><dd>@aluwal.arg</dd>
+      </dl>
+      <div>
+        <div class="qr" id="qr"></div>
+        <div class="qr-cap">Escaneá y escribinos</div>
+      </div>
+    </div>
+  </div>
+  <div class="legal">
+    <span>Aluwal Aberturas · Distribuidor oficial Hierromas. Especificaciones según fábrica; pueden cambiar sin previo aviso. Las imágenes son ilustrativas y los colores pueden variar respecto del producto real.</span>
+    <img src="img/hierromas.png" alt="Hierromas">
+  </div>
+</section>
+
+<script>
+  new QRCode(document.getElementById('qr'), { text:'https://wa.me/5491123948049', width:256, height:256, colorDark:'#0b0b0c', colorLight:'#ffffff', correctLevel:QRCode.CorrectLevel.M });
+</script>
+</body>
+</html>
