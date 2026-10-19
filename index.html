@@ -1359,7 +1359,7 @@
     /* ── Cotizador modal ─────────────────────────────────────── */
     function abrirCotizador() {
       const iframe = document.getElementById('cot-iframe');
-      if (!iframe.src || iframe.src === window.location.href) {
+      if (iframe.src !== iframe.dataset.src) {
         iframe.src = iframe.dataset.src;
       }
       document.getElementById('modal-cot').style.display = 'block';
